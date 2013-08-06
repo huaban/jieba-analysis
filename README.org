@@ -45,6 +45,37 @@
 
 
 * 性能评估
+  - 测试机配置
+  #+BEGIN_SRC screen
+    Processor 2 Intel(R) Pentium(R) CPU G620 @ 2.60GHz
+    Memory：8GB
+    
+    分词测试时机器开了许多应用(eclipse、emacs、chrome...)，可能
+    会影响到测试速度
+  #+END_SRC
+  - [[src/test/resources/test.txt][测试文本]]
+  - 测试结果(单线程，对测试文本逐行分词，并循环调用上万次)
+    #+BEGIN_SRC screen
+      循环调用一万次
+      第一次测试结果：
+      time escape:12373, rate:2486.986533kb/s, words:917319.94/s
+      第二次测试结果：
+      time escape:12284, rate:2505.005241kb/s, words:923966.10/s
+      第三次测试结果：
+      time escape:12336, rate:2494.445880kb/s, words:920071.30/s
+      
+      循环调用2万次
+      第一次测试结果：
+      time escape:22237, rate:2767.593144kb/s, words:1020821.12/s
+      第二次测试结果：
+      time escape:22435, rate:2743.167762kb/s, words:1011811.87/s
+      第三次测试结果：
+      time escape:22102, rate:2784.497726kb/s, words:1027056.34/s
+      统计结果:词典加载时间1.8s左右，分词效率每秒2Mb多，近100万词。
+      
+    #+END_SRC
+
+
 
 * 许可证
   jieba(python版本)的许可证为MIT，jieba(java版本)的许可证为ApacheLicence 2.0
