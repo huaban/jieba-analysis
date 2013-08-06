@@ -1,0 +1,24 @@
+* 结巴分词(java版) jieba-analysis
+  首先感谢jieba分词原作者[[https://github.com/fxsjy][fxsjy]]，没有他的无私贡献，我们也不会结识到结巴
+  分词，更不会有现在的java版本。
+
+  结巴分词的原始版本为python编写，目前该项目在github上的关注量为170，
+  打星727次（最新的数据以原仓库为准），Fork238次，已经有一定的用户群。
+
+  结巴分词(java版)只保留的原项目针对搜索引擎分词的功能(cut_for_index、cut_for_search)，词性标注，关键词提取没有实现(今后如用到，可以考虑实现)。
+
+* 简介
+
+* 如何获取
+
+* 如何使用
+
+* 性能评估
+
+* 许可证
+  
+
+[fxsjy]: https://github.com/fxsjy "fxsjy"
+
+
+
