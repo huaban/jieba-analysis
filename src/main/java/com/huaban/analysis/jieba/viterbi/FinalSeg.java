@@ -2,6 +2,7 @@ package com.huaban.analysis.jieba.viterbi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -65,9 +66,10 @@ public class FinalSeg {
         transS.put('S', -0.6658631448798212);
         trans.put('S', transS);
 
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(
-                        PROB_EMIT), Charset.forName("UTF-8")))) {
+        InputStream is = this.getClass().getResourceAsStream(PROB_EMIT);
+        try {
+            BufferedReader br =
+                    new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             emit = new HashMap<Character, Map<Character, Double>>();
             Map<Character, Double> values = null;
             while (br.ready()) {
@@ -82,6 +84,12 @@ public class FinalSeg {
             }
         } catch (IOException e) {
             System.err.println(String.format("%s: load model failure!", PROB_EMIT));
+        } finally {
+            try {
+                if (null != is) is.close();
+            } catch (IOException e) {
+                System.err.println(String.format("%s: close failure!", PROB_EMIT));
+            }
         }
         System.out.println(String.format("model load finished, time elapsed %d ms.",
                 System.currentTimeMillis() - s));

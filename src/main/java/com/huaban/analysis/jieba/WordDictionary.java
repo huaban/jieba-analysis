@@ -3,7 +3,9 @@ package com.huaban.analysis.jieba;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -49,9 +51,11 @@ public class WordDictionary {
     }
 
     public void loadDict() {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(
-                        MAIN_DICT), Charset.forName("UTF-8")))) {
+        InputStream is = this.getClass().getResourceAsStream(MAIN_DICT);
+        try {
+            BufferedReader br =
+                    new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+
             long s = System.currentTimeMillis();
             while (br.ready()) {
                 String line = br.readLine();
@@ -73,6 +77,12 @@ public class WordDictionary {
                     System.currentTimeMillis() - s));
         } catch (IOException e) {
             System.err.println(String.format("%s load failure!", MAIN_DICT));
+        } finally {
+            try {
+                if (null != is) is.close();
+            } catch (IOException e) {
+                System.err.println(String.format("%s close failure!", MAIN_DICT));
+            }
         }
     }
 
@@ -97,9 +107,15 @@ public class WordDictionary {
     }
 
     public void loadUserDict(File userDict) {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(new FileInputStream(userDict),
-                        Charset.forName("UTF-8")));) {
+        InputStream is;
+        try {
+            is = new FileInputStream(userDict);
+        } catch (FileNotFoundException e) {
+            System.err.println(String.format("could not find %s", userDict.getAbsolutePath()));
+            return;
+        }
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
             long s = System.currentTimeMillis();
             while (br.ready()) {
                 String line = br.readLine();
@@ -112,9 +128,16 @@ public class WordDictionary {
                 freqs.put(word, Math.log(freq / total));
             }
             System.out.println(String.format("user dict %s load finished, time elapsed:%dms",
-                    userDict, System.currentTimeMillis() - s));
+                    userDict.getAbsolutePath(), System.currentTimeMillis() - s));
         } catch (IOException e) {
-            System.err.println(String.format("%s: load user dict failure!", userDict));
+            System.err.println(String.format("%s: load user dict failure!",
+                    userDict.getAbsolutePath()));
+        } finally {
+            try {
+                if (null != is) is.close();
+            } catch (IOException e) {
+                System.err.println(String.format("%s close failure!", userDict.getAbsolutePath()));
+            }
         }
     }
 
