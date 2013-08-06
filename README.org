@@ -3,19 +3,62 @@
   分词，更不会有现在的java版本。
 
   结巴分词的原始版本为python编写，目前该项目在github上的关注量为170，
-  打星727次（最新的数据以原仓库为准），Fork238次，已经有一定的用户群。
+  打星727次（最新的数据以原仓库为准），Fork238次，可以说已经有一定的用户群。
 
   结巴分词(java版)只保留的原项目针对搜索引擎分词的功能(cut_for_index、cut_for_search)，词性标注，关键词提取没有实现(今后如用到，可以考虑实现)。
 
 * 简介
-
+** 支持分词模式
+   - Search模式，用于对用户查询词分词
+   - Index模式，用于对索引文档分词
+  
 * 如何获取
+  - =git clone https://github.com/piaolingxue/jieba-analysis.git=
+  - =cd jieba-analysis=
+  - =mvn package install= ，安装到本地仓库
+  - 在你的 =pom.xml= 文件中添加以下依赖。
+    #+BEGIN_SRC xml
+      <dependency>
+        <groupId>com.huaban</groupId>
+        <artifactId>jieba-analysis</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+    #+END_SRC
+
 
 * 如何使用
+  - Demo
+  #+BEGIN_SRC java
+    
+    @Test
+    public void testDemo() {
+        JiebaSegmenter segmenter = new JiebaSegmenter();
+        String[] sentences =
+            new String[] {"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。", "我不喜欢日本和服。", "雷猴回归人间。",
+                          "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作", "结果婚的和尚未结过婚的"};
+        for (String sentence : sentences) {
+            System.out.println(segmenter.process(sentence, SegMode.INDEX).toString());
+        }
+    }
+  #+END_SRC
+
+
 
 * 性能评估
 
 * 许可证
+  jieba(python版本)的许可证为MIT，jieba(java版本)的许可证为ApacheLicence 2.0
+  #+BEGIN_SRC screen
+    Copyright (C) 2013 Huaban Inc
+    
+    Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+  #+END_SRC
+
+
   
 
 [fxsjy]: https://github.com/fxsjy "fxsjy"
