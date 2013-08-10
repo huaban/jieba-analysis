@@ -42,7 +42,11 @@
     }
   #+END_SRC
 
-
+* 算法(wiki补充...)
+  - [ ] 基于 =trie= 树结构实现高效词图扫描
+  - [ ] 生成所有切词可能的有向无环图 =DAG=
+  - [ ] 采用动态规划算法计算最佳切词组合
+  - [ ] 基于 =HMM= 模型，采用 =Viterbi= (维特比)算法实现未登录词识别
 
 * 性能评估
   - 测试机配置
@@ -58,20 +62,25 @@
     #+BEGIN_SRC screen
       循环调用一万次
       第一次测试结果：
-      time escape:12373, rate:2486.986533kb/s, words:917319.94/s
+      time elapsed:12373, rate:2486.986533kb/s, words:917319.94/s
       第二次测试结果：
-      time escape:12284, rate:2505.005241kb/s, words:923966.10/s
+      time elapsed:12284, rate:2505.005241kb/s, words:923966.10/s
       第三次测试结果：
-      time escape:12336, rate:2494.445880kb/s, words:920071.30/s
+      time elapsed:12336, rate:2494.445880kb/s, words:920071.30/s
       
       循环调用2万次
       第一次测试结果：
-      time escape:22237, rate:2767.593144kb/s, words:1020821.12/s
+      time elapsed:22237, rate:2767.593144kb/s, words:1020821.12/s
       第二次测试结果：
-      time escape:22435, rate:2743.167762kb/s, words:1011811.87/s
+      time elapsed:22435, rate:2743.167762kb/s, words:1011811.87/s
       第三次测试结果：
-      time escape:22102, rate:2784.497726kb/s, words:1027056.34/s
+      time elapsed:22102, rate:2784.497726kb/s, words:1027056.34/s
       统计结果:词典加载时间1.8s左右，分词效率每秒2Mb多，近100万词。
+      
+      2 Processor Intel(R) Core(TM) i3-2100 CPU @ 3.10GHz
+      12G 测试效果
+      time elapsed:19597, rate:3140.428063kb/s, words:1158340.52/s
+      time elapsed:20122, rate:3058.491639kb/s, words:1128118.44/s
       
     #+END_SRC
 
