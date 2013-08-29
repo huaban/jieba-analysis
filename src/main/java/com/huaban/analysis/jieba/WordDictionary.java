@@ -117,6 +117,7 @@ public class WordDictionary {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             long s = System.currentTimeMillis();
+            int count = 0;
             while (br.ready()) {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
@@ -126,9 +127,11 @@ public class WordDictionary {
                 double freq = Double.valueOf(tokens[1]);
                 word = addWord(word);
                 freqs.put(word, Math.log(freq / total));
+                count++;
             }
-            System.out.println(String.format("user dict %s load finished, time elapsed:%dms",
-                    userDict.getAbsolutePath(), System.currentTimeMillis() - s));
+            System.out.println(String.format(
+                    "user dict %s load finished, tot words:%d, time elapsed:%dms",
+                    userDict.getAbsolutePath(), count, System.currentTimeMillis() - s));
         } catch (IOException e) {
             System.err.println(String.format("%s: load user dict failure!",
                     userDict.getAbsolutePath()));
