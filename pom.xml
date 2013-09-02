@@ -1,10 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 	<groupId>com.huaban</groupId>
 	<artifactId>jieba-analysis</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>结巴分词工具(jieba for java)</name>
@@ -18,10 +22,23 @@
 		</license>
 	</licenses>
 
+	<scm>
+		<connection>scm:git:git@github.com:huaban/jieba-analysis.git</connection>
+		<developerConnection>scm:git:git@github.com:huaban/jieba-analysis.git</developerConnection>
+		<url>git@github.com:huaban/jieba-analysis.git</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<developers>
+		<developer>
+			<id>libin</id>
+			<name>libin</name>
+			<email>piaolingxue305@gmail.com</email>
+		</developer>
+	</developers>
 
 	<dependencies>
 		<dependency>
@@ -45,4 +62,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
