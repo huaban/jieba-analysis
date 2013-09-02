@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>com.huaban</groupId>
 	<artifactId>jieba-analysis</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>结巴分词工具(jieba for java)</name>
@@ -63,4 +63,11 @@
 		</plugins>
 	</build>
 
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Staging Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 </project>
