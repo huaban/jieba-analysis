@@ -16,8 +16,7 @@ import java.util.Map.Entry;
 public class WordDictionary {
     private static WordDictionary singleInstance;
     private static final String MAIN_DICT = "/dict.txt";
-    private static String SOUGOU_DICT = "jieba/sougou.dict";
-    private static String USER_DICT = "jieba/user.dict";
+    private static String USER_DICT_SUFFIX = ".dict";
 
     public final TrieNode trie = new TrieNode();
     public final Map<String, Double> freqs = new HashMap<String, Double>();
@@ -42,10 +41,11 @@ public class WordDictionary {
      */
     public synchronized void init(File configFile) {
         if (!isLoaded) {
-            File sougouDict = new File(configFile, SOUGOU_DICT);
-            File userDict = new File(configFile, USER_DICT);
-            singleInstance.loadUserDict(sougouDict);
-            singleInstance.loadUserDict(userDict);
+            for (File userDict : configFile.listFiles()) {
+                if (userDict.getPath().endsWith(USER_DICT_SUFFIX)) {
+                    singleInstance.loadUserDict(userDict);
+                }
+            }
             isLoaded = true;
         }
     }
