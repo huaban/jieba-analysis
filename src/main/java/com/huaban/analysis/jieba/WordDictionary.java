@@ -14,9 +14,13 @@ import java.util.Map.Entry;
 
 
 public class WordDictionary {
-    private static WordDictionary singleInstance;
+    private static WordDictionary singleInstance = new WordDictionary();
     private static final String MAIN_DICT = "/dict.txt";
     private static String USER_DICT_SUFFIX = ".dict";
+
+    static {
+        singleInstance.loadDict();
+    }
 
     public final TrieNode trie = new TrieNode();
     public final Map<String, Double> freqs = new HashMap<String, Double>();
@@ -30,12 +34,6 @@ public class WordDictionary {
 
 
     public static WordDictionary getInstance() {
-        if (singleInstance == null) {
-            synchronized (singleInstance) {
-                singleInstance = new WordDictionary();
-                singleInstance.loadDict();
-            }
-        }
         return singleInstance;
     }
 
