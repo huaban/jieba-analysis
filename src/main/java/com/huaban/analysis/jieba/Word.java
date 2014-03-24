@@ -71,7 +71,7 @@ public class Word implements CharSequence{
 
     /**
      * Returns the length of this character sequence.  The length is the number
-     * of 16-bit <code>char</code>s in the sequence.</p>
+     * of 16-bit <code>char</code>s in the sequence.
      *
      * @return the number of <code>char</code>s in this sequence
      */
@@ -84,8 +84,8 @@ public class Word implements CharSequence{
      * Returns the <code>char</code> value at the specified index.  An index ranges from zero
      * to <tt>length() - 1</tt>.  The first <code>char</code> value of the sequence is at
      * index zero, the next at index one, and so on, as for array
-     * indexing. </p>
-     * <p/>
+     * indexing.
+     *
      * <p>If the <code>char</code> value specified by the index is a
      * <a href="{@docRoot}/java/lang/Character.html#unicode">surrogate</a>, the surrogate
      * value is returned.
@@ -106,7 +106,7 @@ public class Word implements CharSequence{
      * ends with the <code>char</code> value at index <tt>end - 1</tt>.  The length
      * (in <code>char</code>s) of the
      * returned sequence is <tt>end - start</tt>, so if <tt>start == end</tt>
-     * then an empty sequence is returned. </p>
+     * then an empty sequence is returned.
      *
      * @param start the start index, inclusive
      * @param end   the end index, exclusive
