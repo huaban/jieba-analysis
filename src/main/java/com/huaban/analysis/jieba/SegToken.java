@@ -1,21 +1,27 @@
 package com.huaban.analysis.jieba;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class SegToken {
-    public String token;
+    public Word word;
 
     public int startOffset;
 
     public int endOffset;
 
-    public SegToken(String token, int startOffset, int endOffset) {
-	this.token = token;
-	this.startOffset = startOffset;
-	this.endOffset = endOffset;
+
+    public SegToken(Word word, int startOffset, int endOffset) {
+        this.word = word;
+        this.startOffset = startOffset;
+        this.endOffset = endOffset;
     }
 
     @Override
     public String toString() {
-	return "[" + token + ", " + startOffset + ", " + endOffset + "]";
+        if (StringUtils.isBlank(this.word.getTokenType()))
+            return "[" + this.word.getToken() + ", " + startOffset + ", " + endOffset + "]";
+        else
+            return "[" + this.word.getToken() + ", " + startOffset + ", " + endOffset + ", " + this.word.getTokenType() + "]";
     }
 
 }
