@@ -47,6 +47,11 @@
 			<version>4.8</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.1</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -77,7 +82,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
+				<version>2.9.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                </configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>

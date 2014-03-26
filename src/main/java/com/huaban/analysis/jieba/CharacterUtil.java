@@ -37,9 +37,9 @@ public class CharacterUtil {
     }
 
     /**
-     * 全角->半角,大写->小写
-     * @param input
-     * @return
+     * 全角 to 半角,大写 to 小写
+     * @param input 输入字符
+     * @return 转换后的字符
      */
 	public static char regularize(char input){
         if (input == 12288) {
