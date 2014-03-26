@@ -145,7 +145,7 @@ public class JiebaSegmenterTest extends TestCase {
     public void testBugSentence() {
         String[] bugs =
                 new String[] {
-                              "utf-8",
+                              "UTF-8",
                               "iphone5",
                               "鲜芋仙 3",
                               "RT @laoshipukong : 27日，",
