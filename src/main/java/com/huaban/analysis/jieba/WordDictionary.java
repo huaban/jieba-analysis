@@ -14,9 +14,13 @@ import java.util.Map.Entry;
 
 
 public class WordDictionary {
-    private static WordDictionary singleInstance;
+    private static WordDictionary singleInstance = new WordDictionary();
     private static final String MAIN_DICT = "/dict.txt";
     private static String USER_DICT_SUFFIX = ".dict";
+
+    static {
+        singleInstance.loadDict();
+    }
 
     public final TrieNode trie = new TrieNode();
     public final Map<String, Word> freqs = new HashMap<String, Word>();
@@ -24,15 +28,15 @@ public class WordDictionary {
     private Double total = 0.0;
     private static boolean isLoaded = false;
 
-    private WordDictionary() {}
 
-    public synchronized static WordDictionary getInstance() {
-        if (singleInstance == null) {
-            singleInstance = new WordDictionary();
-            singleInstance.loadDict();
-        }
+    private WordDictionary() {
+    }
+
+
+    public static WordDictionary getInstance() {
         return singleInstance;
     }
+
 
     /**
      * for ES to initialize the user dictionary.
@@ -50,17 +54,19 @@ public class WordDictionary {
         }
     }
 
+
     public void loadDict() {
         InputStream is = this.getClass().getResourceAsStream(MAIN_DICT);
         try {
-            BufferedReader br =
-                    new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 
             long s = System.currentTimeMillis();
             while (br.ready()) {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
-                if (tokens.length < 3) continue;
+
+                if (tokens.length < 3)
+                    continue;
 
                 String word = tokens[0];
                 String tokenType = tokens[2];
@@ -75,18 +81,21 @@ public class WordDictionary {
                 minFreq = Math.min(entry.getValue().getFreq(), minFreq);
             }
             System.out.println(String.format("main dict load finished, time elapsed %d ms",
-                    System.currentTimeMillis() - s));
-        } catch (IOException e) {
+                System.currentTimeMillis() - s));
+        }
+        catch (IOException e) {
             System.err.println(String.format("%s load failure!", MAIN_DICT));
-        } finally {
+        }
+        finally {
             try {
-                if (null != is) is.close();
-            } catch (IOException e) {
+                if (null != is)
+                    is.close();
+            }
+            catch (IOException e) {
                 System.err.println(String.format("%s close failure!", MAIN_DICT));
             }
         }
     }
-
 
 
     private String addWord(String word) {
@@ -95,7 +104,8 @@ public class WordDictionary {
         for (char ch : word.toCharArray()) {
             ch = CharacterUtil.regularize(ch);
             r.append(ch);
-            if (ch == ' ') continue;
+            if (ch == ' ')
+                continue;
             TrieNode pChild = null;
             if ((pChild = p.childs.get(ch)) == null) {
                 pChild = new TrieNode();
@@ -107,11 +117,13 @@ public class WordDictionary {
         return r.toString();
     }
 
+
     public void loadUserDict(File userDict) {
         InputStream is;
         try {
             is = new FileInputStream(userDict);
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             System.err.println(String.format("could not find %s", userDict.getAbsolutePath()));
             return;
         }
@@ -122,7 +134,9 @@ public class WordDictionary {
             while (br.ready()) {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
-                if (tokens.length < 3) continue;
+
+                if (tokens.length < 3)
+                    continue;
 
                 String word = tokens[0];
                 String tokenType = tokens[2];
@@ -131,36 +145,43 @@ public class WordDictionary {
                 freqs.put(word, Word.createWord(word, Math.log(freq / total), tokenType));
                 count++;
             }
-            System.out.println(String.format(
-                    "user dict %s load finished, tot words:%d, time elapsed:%dms",
-                    userDict.getAbsolutePath(), count, System.currentTimeMillis() - s));
-        } catch (IOException e) {
-            System.err.println(String.format("%s: load user dict failure!",
-                    userDict.getAbsolutePath()));
-        } finally {
+            System.out.println(String.format("user dict %s load finished, tot words:%d, time elapsed:%dms",
+                userDict.getAbsolutePath(), count, System.currentTimeMillis() - s));
+        }
+        catch (IOException e) {
+            System.err.println(String.format("%s: load user dict failure!", userDict.getAbsolutePath()));
+        }
+        finally {
             try {
-                if (null != is) is.close();
-            } catch (IOException e) {
+                if (null != is)
+                    is.close();
+            }
+            catch (IOException e) {
                 System.err.println(String.format("%s close failure!", userDict.getAbsolutePath()));
             }
         }
     }
 
+
     public TrieNode getTrie() {
         return this.trie;
     }
+
 
     public boolean containsWord(String word) {
         return freqs.containsKey(word);
     }
 
-    public Word getWord(String token){
-        if(containsWord(token)){
+
+    public Word getWord(String token) {
+        if (containsWord(token)) {
             return freqs.get(token);
-        } else {
+        }
+        else {
             return null;
         }
     }
+
 
     public Double getFreq(String key) {
         if (containsWord(key))
