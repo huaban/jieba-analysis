@@ -64,6 +64,7 @@ public class WordDictionary {
             while (br.ready()) {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
+
                 if (tokens.length < 3)
                     continue;
 
