@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>com.huaban</groupId>
 	<artifactId>jieba-analysis</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>结巴分词工具(jieba for java)</name>
