@@ -26,18 +26,16 @@
       <dependency>
         <groupId>com.huaban</groupId>
         <artifactId>jieba-analysis</artifactId>
-        <version>0.0.2</version>
+        <version>1.0.0</version>
       </dependency>
     #+END_SRC
 
   - 当前快照版本
-    - 支持词性标注 [[https://github.com/huaban/jieba-analysis/pull/4][#4]]
-    - 修复以'-'连接词分词错误问题 [[https://github.com/huaban/jieba-analysis/issues/3][#3]]
     #+BEGIN_SRC xml
       <dependency>
         <groupId>com.huaban</groupId>
         <artifactId>jieba-analysis</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
       </dependency>
     #+END_SRC
 
