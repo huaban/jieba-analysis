@@ -6,3 +6,5 @@ target/
 *.jar
 *.war
 *.ear
+
+jieba-analysis.iml
