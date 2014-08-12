@@ -117,8 +117,13 @@ public class WordDictionary {
         return r.toString();
     }
 
-
+    
     public void loadUserDict(File userDict) {
+    	loadUserDict(userDict, Charset.forName("UTF-8"));
+    }
+
+
+    public void loadUserDict(File userDict, Charset charset) {
         InputStream is;
         try {
             is = new FileInputStream(userDict);
@@ -128,7 +133,7 @@ public class WordDictionary {
             return;
         }
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, charset));
             long s = System.currentTimeMillis();
             int count = 0;
             while (br.ready()) {
