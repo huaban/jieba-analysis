@@ -20,7 +20,7 @@ public class WordDictionary {
     private static final String MAIN_DICT = "/dict.txt";
     private static String USER_DICT_SUFFIX = ".dict";
 
-    public final Map<String, Word> freqs = new HashMap<String, Word>();
+    public final Map<String, Double> freqs = new HashMap<String, Double>();
     public final Set<String> loadedPath = new HashSet<String>();
     private Double minFreq = Double.MAX_VALUE;
     private Double total = 0.0;
@@ -77,20 +77,19 @@ public class WordDictionary {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
 
-                if (tokens.length < 3)
+                if (tokens.length < 2)
                     continue;
 
                 String word = tokens[0];
-                String tokenType = tokens[2];
                 double freq = Double.valueOf(tokens[1]);
                 total += freq;
                 word = addWord(word);
-                freqs.put(word, createWord(word, freq, tokenType));
+                freqs.put(word, freq);
             }
             // normalize
-            for (Entry<String, Word> entry : freqs.entrySet()) {
-                entry.getValue().setFreq(Math.log(entry.getValue().getFreq() / total));
-                minFreq = Math.min(entry.getValue().getFreq(), minFreq);
+            for (Entry<String, Double> entry : freqs.entrySet()) {
+                entry.setValue((Math.log(entry.getValue() / total)));
+                minFreq = Math.min(entry.getValue(), minFreq);
             }
             System.out.println(String.format("main dict load finished, time elapsed %d ms",
                 System.currentTimeMillis() - s));
@@ -144,23 +143,13 @@ public class WordDictionary {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
 
-                if (tokens.length < 1)
+                if (tokens.length < 2)
                     continue;
 
                 String word = tokens[0];
+                double freq = Double.valueOf(tokens[1]);
                 word = addWord(word);
-                if (tokens.length == 1) {
-                    freqs.put(word, createWord(word, Math.log(3.0 / total)));
-                }
-                else if (tokens.length == 2) {
-                    double freq = Double.valueOf(tokens[1]);
-                    freqs.put(word, createWord(word, Math.log(freq / total)));
-                }
-                else {
-                    String tokenType = tokens[2];
-                    double freq = Double.valueOf(tokens[1]);
-                    freqs.put(word, createWord(word, Math.log(freq / total), tokenType));
-                }
+                freqs.put(word, Math.log(freq / total));
                 count++;
             }
             System.out.println(String.format("user dict %s load finished, tot words:%d, time elapsed:%dms",
@@ -191,37 +180,10 @@ public class WordDictionary {
     }
 
 
-    public Word getWord(String token) {
-        if (containsWord(token)) {
-            return freqs.get(token);
-        }
-        else {
-            return null;
-        }
-    }
-
-
     public Double getFreq(String key) {
         if (containsWord(key))
-            return freqs.get(key).getFreq();
+            return freqs.get(key);
         else
             return minFreq;
-    }
-
-
-    public Word createWord(String token, Double freq, String tokenType) {
-        if (freqs.containsKey(token))
-            return freqs.get(token);
-        return new Word(token, freq, tokenType);
-    }
-
-
-    public Word createWord(String token, Double freq) {
-        return createWord(token, freq, "");
-    }
-
-
-    public Word createWord(String token) {
-        return createWord(token, 0.0, "");
     }
 }

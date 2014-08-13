@@ -13,8 +13,6 @@ import java.util.regex.Matcher;
 
 import com.huaban.analysis.jieba.CharacterUtil;
 import com.huaban.analysis.jieba.Pair;
-import com.huaban.analysis.jieba.Word;
-import com.huaban.analysis.jieba.WordDictionary;
 
 
 public class FinalSeg {
@@ -26,7 +24,6 @@ public class FinalSeg {
     private static Map<Character, Map<Character, Double>> trans;
     private static Map<Character, char[]> prevStatus;
     private static Double MIN_FLOAT = -3.14e100;;
-    private WordDictionary wordDict = WordDictionary.getInstance();
 
 
     private FinalSeg() {
@@ -108,7 +105,7 @@ public class FinalSeg {
     }
 
 
-    public void cut(String sentence, List<Word> tokens) {
+    public void cut(String sentence, List<String> tokens) {
         StringBuilder chinese = new StringBuilder();
         StringBuilder other = new StringBuilder();
         for (int i = 0; i < sentence.length(); ++i) {
@@ -137,7 +134,7 @@ public class FinalSeg {
     }
 
 
-    public void viterbi(String sentence, List<Word> tokens) {
+    public void viterbi(String sentence, List<String> tokens) {
         Vector<Map<Character, Double>> v = new Vector<Map<Character, Double>>();
         Map<Character, Vector<Character>> path = new HashMap<Character, Vector<Character>>();
 
@@ -194,30 +191,30 @@ public class FinalSeg {
             if (pos == 'B')
                 begin = i;
             else if (pos == 'E') {
-                tokens.add(wordDict.createWord(sentence.substring(begin, i + 1)));
+                tokens.add(sentence.substring(begin, i + 1));
                 next = i + 1;
             }
             else if (pos == 'S') {
-                tokens.add(wordDict.createWord(sentence.substring(i, i + 1)));
+                tokens.add(sentence.substring(i, i + 1));
                 next = i + 1;
             }
         }
         if (next < sentence.length())
-            tokens.add(wordDict.createWord(sentence.substring(next)));
+            tokens.add(sentence.substring(next));
     }
 
 
-    private void processOtherUnknownWords(String other, List<Word> tokens) {
+    private void processOtherUnknownWords(String other, List<String> tokens) {
         Matcher mat = CharacterUtil.reSkip.matcher(other);
         int offset = 0;
         while (mat.find()) {
             if (mat.start() > offset) {
-                tokens.add(wordDict.createWord(other.substring(offset, mat.start())));
+                tokens.add(other.substring(offset, mat.start()));
             }
-            tokens.add(wordDict.createWord(mat.group()));
+            tokens.add(mat.group());
             offset = mat.end();
         }
         if (offset < other.length())
-            tokens.add(wordDict.createWord(other.substring(offset)));
+            tokens.add(other.substring(offset));
     }
 }

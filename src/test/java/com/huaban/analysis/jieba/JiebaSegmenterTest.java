@@ -163,14 +163,14 @@ public class JiebaSegmenterTest extends TestCase {
         long length = 0L;
         long wordCount = 0L;
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 20000; ++i)
+        for (int i = 0; i < 2000; ++i)
             for (String sentence : sentences) {
                 segmenter.process(sentence, SegMode.INDEX);
                 length += sentence.getBytes().length;
                 wordCount += sentence.length();
             }
         long elapsed = (System.currentTimeMillis() - start);
-        System.out.println(String.format("time elapsed:%d, rate:%fkb/s, words:%.2f/s", elapsed,
+        System.out.println(String.format("time elapsed:%d, rate:%fkb/s, sentences:%.2f/s", elapsed,
             (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0)));
     }
 }
