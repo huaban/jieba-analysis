@@ -9,32 +9,39 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 
 public class WordDictionary {
-    private static WordDictionary singleInstance = new WordDictionary();
+    private static WordDictionary singleton;
     private static final String MAIN_DICT = "/dict.txt";
     private static String USER_DICT_SUFFIX = ".dict";
 
-    static {
-        singleInstance.loadDict();
-    }
-
-    public final TrieNode trie = new TrieNode();
     public final Map<String, Word> freqs = new HashMap<String, Word>();
+    public final Set<String> loadedPath = new HashSet<String>();
     private Double minFreq = Double.MAX_VALUE;
     private Double total = 0.0;
-    private static boolean isLoaded = false;
+    private DictSegment _dict;
 
 
     private WordDictionary() {
+        this.loadDict();
     }
 
 
     public static WordDictionary getInstance() {
-        return singleInstance;
+        if (singleton == null) {
+            synchronized (WordDictionary.class) {
+                if (singleton == null) {
+                    singleton = new WordDictionary();
+                    return singleton;
+                }
+            }
+        }
+        return singleton;
     }
 
 
@@ -43,19 +50,24 @@ public class WordDictionary {
      * 
      * @param configFile
      */
-    public synchronized void init(File configFile) {
-        if (!isLoaded) {
+    public void init(File configFile) {
+        String path = configFile.getAbsolutePath();
+        System.out.println("initialize user dictionary:" + path);
+        synchronized (WordDictionary.class) {
+            if (loadedPath.contains(path))
+                return;
             for (File userDict : configFile.listFiles()) {
                 if (userDict.getPath().endsWith(USER_DICT_SUFFIX)) {
-                    singleInstance.loadUserDict(userDict);
+                    singleton.loadUserDict(userDict);
+                    loadedPath.add(path);
                 }
             }
-            isLoaded = true;
         }
     }
 
 
     public void loadDict() {
+        _dict = new DictSegment((char) 0);
         InputStream is = this.getClass().getResourceAsStream(MAIN_DICT);
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -73,7 +85,7 @@ public class WordDictionary {
                 double freq = Double.valueOf(tokens[1]);
                 total += freq;
                 word = addWord(word);
-                freqs.put(word, Word.createWord(word, freq, tokenType));
+                freqs.put(word, createWord(word, freq, tokenType));
             }
             // normalize
             for (Entry<String, Word> entry : freqs.entrySet()) {
@@ -99,27 +111,18 @@ public class WordDictionary {
 
 
     private String addWord(String word) {
-        TrieNode p = this.trie;
-        StringBuilder r = new StringBuilder();
-        for (char ch : word.toCharArray()) {
-            ch = CharacterUtil.regularize(ch);
-            r.append(ch);
-            if (ch == ' ')
-                continue;
-            TrieNode pChild = null;
-            if ((pChild = p.childs.get(ch)) == null) {
-                pChild = new TrieNode();
-                p.childs.put(ch, pChild);
-            }
-            p = pChild;
+        if (null != word && !"".equals(word.trim())) {
+            String key = word.trim().toLowerCase();
+            _dict.fillSegment(key.toCharArray());
+            return key;
         }
-        p.childs.put(' ', null);
-        return r.toString();
+        else
+            return null;
     }
 
-    
+
     public void loadUserDict(File userDict) {
-    	loadUserDict(userDict, Charset.forName("UTF-8"));
+        loadUserDict(userDict, Charset.forName("UTF-8"));
     }
 
 
@@ -133,6 +136,7 @@ public class WordDictionary {
             return;
         }
         try {
+            @SuppressWarnings("resource")
             BufferedReader br = new BufferedReader(new InputStreamReader(is, charset));
             long s = System.currentTimeMillis();
             int count = 0;
@@ -140,14 +144,23 @@ public class WordDictionary {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
 
-                if (tokens.length < 3)
+                if (tokens.length < 1)
                     continue;
 
                 String word = tokens[0];
-                String tokenType = tokens[2];
-                double freq = Double.valueOf(tokens[1]);
                 word = addWord(word);
-                freqs.put(word, Word.createWord(word, Math.log(freq / total), tokenType));
+                if (tokens.length == 1) {
+                    freqs.put(word, createWord(word, Math.log(3.0 / total)));
+                }
+                else if (tokens.length == 2) {
+                    double freq = Double.valueOf(tokens[1]);
+                    freqs.put(word, createWord(word, Math.log(freq / total)));
+                }
+                else {
+                    String tokenType = tokens[2];
+                    double freq = Double.valueOf(tokens[1]);
+                    freqs.put(word, createWord(word, Math.log(freq / total), tokenType));
+                }
                 count++;
             }
             System.out.println(String.format("user dict %s load finished, tot words:%d, time elapsed:%dms",
@@ -168,8 +181,8 @@ public class WordDictionary {
     }
 
 
-    public TrieNode getTrie() {
-        return this.trie;
+    public DictSegment getTrie() {
+        return this._dict;
     }
 
 
@@ -193,5 +206,22 @@ public class WordDictionary {
             return freqs.get(key).getFreq();
         else
             return minFreq;
+    }
+
+
+    public Word createWord(String token, Double freq, String tokenType) {
+        if (freqs.containsKey(token))
+            return freqs.get(token);
+        return new Word(token, freq, tokenType);
+    }
+
+
+    public Word createWord(String token, Double freq) {
+        return createWord(token, freq, "");
+    }
+
+
+    public Word createWord(String token) {
+        return createWord(token, 0.0, "");
     }
 }
