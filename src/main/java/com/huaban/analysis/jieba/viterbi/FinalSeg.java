@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
+import java.util.Collections;
 
 import com.huaban.analysis.jieba.CharacterUtil;
 import com.huaban.analysis.jieba.Pair;
+import com.huaban.analysis.jieba.Node;
 
 
 public class FinalSeg {
@@ -136,7 +138,7 @@ public class FinalSeg {
 
     public void viterbi(String sentence, List<String> tokens) {
         Vector<Map<Character, Double>> v = new Vector<Map<Character, Double>>();
-        Map<Character, Vector<Character>> path = new HashMap<Character, Vector<Character>>();
+        Map<Character, Node> path = new HashMap<Character, Node>();
 
         v.add(new HashMap<Character, Double>());
         for (char state : states) {
@@ -144,14 +146,13 @@ public class FinalSeg {
             if (null == emP)
                 emP = MIN_FLOAT;
             v.get(0).put(state, start.get(state) + emP);
-            path.put(state, new Vector<Character>());
-            path.get(state).add(state);
+            path.put(state, new Node(state, null));
         }
 
         for (int i = 1; i < sentence.length(); ++i) {
             Map<Character, Double> vv = new HashMap<Character, Double>();
             v.add(vv);
-            Map<Character, Vector<Character>> newPath = new HashMap<Character, Vector<Character>>();
+            Map<Character, Node> newPath = new HashMap<Character, Node>();
             for (char y : states) {
                 Double emp = emit.get(y).get(sentence.charAt(i));
                 if (emp == null)
@@ -170,20 +171,24 @@ public class FinalSeg {
                     }
                 }
                 vv.put(y, candidate.freq);
-                Vector<Character> newPathValue = new Vector<Character>();
-                newPathValue.addAll(path.get(candidate.key));
-                newPathValue.add(y);
-                newPath.put(y, newPathValue);
+                newPath.put(y, new Node(y, path.get(candidate.key)));
             }
             path = newPath;
         }
         double probE = v.get(sentence.length() - 1).get('E');
         double probS = v.get(sentence.length() - 1).get('S');
-        Vector<Character> posList;
+        Vector<Character> posList = new Vector<Character>(sentence.length());
+        Node win;
         if (probE < probS)
-            posList = path.get('S');
+            win = path.get('S');
         else
-            posList = path.get('E');
+            win = path.get('E');
+
+        while (win != null) {
+            posList.add(win.value);
+            win = win.parent;
+        }
+        Collections.reverse(posList);
 
         int begin = 0, next = 0;
         for (int i = 0; i < sentence.length(); ++i) {

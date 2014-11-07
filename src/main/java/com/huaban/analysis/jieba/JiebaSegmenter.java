@@ -173,45 +173,45 @@ public class JiebaSegmenter {
 
         int x = 0;
         int y = 0;
-        String buf = "";
+        String buf;
+        StringBuilder sb = new StringBuilder();
         while (x < N) {
             y = route.get(x).key + 1;
             String lWord = sentence.substring(x, y);
             if (y - x == 1)
-                buf += lWord;
+                sb.append(lWord);
             else {
-                if (buf.length() > 0) {
+                if (sb.length() > 0) {
+                    buf = sb.toString();
+                    sb = new StringBuilder();
                     if (buf.length() == 1) {
-                        tokens.add(buf.toString());
-                        buf = "";
+                        tokens.add(buf);
                     }
                     else {
                         if (wordDict.containsWord(buf)) {
-                            tokens.add(buf.toString());
+                            tokens.add(buf);
                         }
                         else {
                             finalSeg.cut(buf, tokens);
                         }
-                        buf = "";
                     }
                 }
                 tokens.add(lWord);
             }
             x = y;
         }
+        buf = sb.toString();
         if (buf.length() > 0) {
             if (buf.length() == 1) {
-                tokens.add(buf.toString());
-                buf = "";
+                tokens.add(buf);
             }
             else {
                 if (wordDict.containsWord(buf)) {
-                    tokens.add(buf.toString());
+                    tokens.add(buf);
                 }
                 else {
                     finalSeg.cut(buf, tokens);
                 }
-                buf = "";
             }
 
         }
