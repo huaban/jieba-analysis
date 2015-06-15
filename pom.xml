@@ -39,6 +39,10 @@
             <name>libin</name>
             <email>piaolingxue305@gmail.com</email>
         </developer>
+        <developer>
+            <id>tokikanno</id>
+            <name>tokikanno</name>
+        </developer>
     </developers>
 
     <dependencies>
