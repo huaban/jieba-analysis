@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -91,7 +92,7 @@ public class FinalSeg {
             }
         }
         catch (IOException e) {
-            System.err.println(String.format("%s: load model failure!", PROB_EMIT));
+            System.err.println(String.format(Locale.getDefault(), "%s: load model failure!", PROB_EMIT));
         }
         finally {
             try {
@@ -99,10 +100,10 @@ public class FinalSeg {
                     is.close();
             }
             catch (IOException e) {
-                System.err.println(String.format("%s: close failure!", PROB_EMIT));
+                System.err.println(String.format(Locale.getDefault(), "%s: close failure!", PROB_EMIT));
             }
         }
-        System.out.println(String.format("model load finished, time elapsed %d ms.",
+        System.out.println(String.format(Locale.getDefault(), "model load finished, time elapsed %d ms.",
             System.currentTimeMillis() - s));
     }
 

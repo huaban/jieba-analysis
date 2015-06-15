@@ -1,15 +1,17 @@
 package com.huaban.analysis.jieba;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -50,17 +52,25 @@ public class WordDictionary {
      * 
      * @param configFile
      */
-    public void init(File configFile) {
-        String path = configFile.getAbsolutePath();
-        System.out.println("initialize user dictionary:" + path);
+    public void init(Path configFile) {
+        String abspath = configFile.toAbsolutePath().toString();
+        System.out.println("initialize user dictionary:" + abspath);
         synchronized (WordDictionary.class) {
-            if (loadedPath.contains(path))
+            if (loadedPath.contains(abspath))
                 return;
-            for (File userDict : configFile.listFiles()) {
-                if (userDict.getPath().endsWith(USER_DICT_SUFFIX)) {
-                    singleton.loadUserDict(userDict);
-                    loadedPath.add(path);
+            
+            DirectoryStream<Path> stream;
+            try {
+                stream = Files.newDirectoryStream(configFile, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
+                for (Path path: stream){
+                    System.err.println(String.format(Locale.getDefault(), "loading dict %s", path.toString()));
+                    singleton.loadUserDict(path);
                 }
+                loadedPath.add(abspath);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                // e.printStackTrace();
+                System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
             }
         }
     }
@@ -91,11 +101,11 @@ public class WordDictionary {
                 entry.setValue((Math.log(entry.getValue() / total)));
                 minFreq = Math.min(entry.getValue(), minFreq);
             }
-            System.out.println(String.format("main dict load finished, time elapsed %d ms",
+            System.out.println(String.format(Locale.getDefault(), "main dict load finished, time elapsed %d ms",
                 System.currentTimeMillis() - s));
         }
         catch (IOException e) {
-            System.err.println(String.format("%s load failure!", MAIN_DICT));
+            System.err.println(String.format(Locale.getDefault(), "%s load failure!", MAIN_DICT));
         }
         finally {
             try {
@@ -103,7 +113,7 @@ public class WordDictionary {
                     is.close();
             }
             catch (IOException e) {
-                System.err.println(String.format("%s close failure!", MAIN_DICT));
+                System.err.println(String.format(Locale.getDefault(), "%s close failure!", MAIN_DICT));
             }
         }
     }
@@ -111,7 +121,7 @@ public class WordDictionary {
 
     private String addWord(String word) {
         if (null != word && !"".equals(word.trim())) {
-            String key = word.trim().toLowerCase();
+            String key = word.trim().toLowerCase(Locale.getDefault());
             _dict.fillSegment(key.toCharArray());
             return key;
         }
@@ -120,23 +130,14 @@ public class WordDictionary {
     }
 
 
-    public void loadUserDict(File userDict) {
-        loadUserDict(userDict, Charset.forName("UTF-8"));
+    public void loadUserDict(Path userDict) {
+        loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
 
-    public void loadUserDict(File userDict, Charset charset) {
-        InputStream is;
+    public void loadUserDict(Path userDict, Charset charset) {                
         try {
-            is = new FileInputStream(userDict);
-        }
-        catch (FileNotFoundException e) {
-            System.err.println(String.format("could not find %s", userDict.getAbsolutePath()));
-            return;
-        }
-        try {
-            @SuppressWarnings("resource")
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, charset));
+            BufferedReader br = Files.newBufferedReader(userDict, charset);
             long s = System.currentTimeMillis();
             int count = 0;
             while (br.ready()) {
@@ -152,20 +153,11 @@ public class WordDictionary {
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
-            System.out.println(String.format("user dict %s load finished, tot words:%d, time elapsed:%dms",
-                userDict.getAbsolutePath(), count, System.currentTimeMillis() - s));
+            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
+            br.close();
         }
         catch (IOException e) {
-            System.err.println(String.format("%s: load user dict failure!", userDict.getAbsolutePath()));
-        }
-        finally {
-            try {
-                if (null != is)
-                    is.close();
-            }
-            catch (IOException e) {
-                System.err.println(String.format("%s close failure!", userDict.getAbsolutePath()));
-            }
+            System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
         }
     }
 
