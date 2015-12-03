@@ -74,6 +74,15 @@ public class WordDictionary {
             }
         }
     }
+    
+    
+    /**
+     * let user just use their own dict instead of the default dict
+     */
+    public void resetDict(){
+    	_dict = new DictSegment((char) 0);
+    	freqs.clear();
+    }
 
 
     public void loadDict() {
