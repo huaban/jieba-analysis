@@ -153,12 +153,12 @@ public class WordDictionary {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
 
-                if (tokens.length < 2)
-                    continue;
-
                 String word = tokens[0];
-                double freq = Double.valueOf(tokens[1]);
-                word = addWord(word);
+
+                double freq = 3.0d;
+                if (tokens.length == 2)
+                    freq = Double.valueOf(tokens[1]);
+                word = addWord(word); 
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
