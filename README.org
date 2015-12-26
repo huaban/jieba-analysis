@@ -97,6 +97,8 @@
 
     #+END_SRC
 
+* 使用本库项目
+  - [[https://github.com/sing1ee/analyzer-solr][analyzer-solr]] @sing1ee
 
 
 * 许可证
