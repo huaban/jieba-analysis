@@ -7,7 +7,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.FileSystems;
-
+/**
+ * @author cndn         
+ */
 public class KeywordExtractor {
 	protected HashSet<String> stopWords;
 	private static final String[] STOP_WORDS = {

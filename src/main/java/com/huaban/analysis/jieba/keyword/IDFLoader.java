@@ -1,5 +1,6 @@
 package com.huaban.analysis.jieba.keyword;
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -8,6 +9,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Collections;
+/**
+ * @author cndn         
+ */
 public class IDFLoader {
 	private Path path;
 	private HashMap<String,Double> idfFreq;

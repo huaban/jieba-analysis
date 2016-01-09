@@ -13,6 +13,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.huaban.analysis.jieba.Pair;
+
+/**
+ * @author cndn         
+ */
 public class TFIDF extends KeywordExtractor{
 	private JiebaSegmenter tokenizer;
 	private IDFLoader idfLoader;
@@ -50,7 +54,7 @@ public class TFIDF extends KeywordExtractor{
      *        - Return number of top keywords, -1 for all words
      * 
      * @return tags
-     *        - an ArrayList of Pair (word,weight)
+     *        - an ArrayList of KeywordWeightsPair (word,weight)
      */
 	public List<KeywordWeightPair> extractTagsWithWeights(String sentence, int topK) {
 		List<Entry<String,Double>> sortedList = extractTagsSortListHelper(sentence);
@@ -77,7 +81,7 @@ public class TFIDF extends KeywordExtractor{
      * @return tags
      *        - an ArrayList of String
      */
-	public List<String> extractTagsWithoutWeights(String sentence, int topK) {
+	public List<String> extractTags(String sentence, int topK) {
 		List<Entry<String,Double>> sortedList = extractTagsSortListHelper(sentence);
 		List<String> tags = new ArrayList<String>();
         if(topK == -1) topK = Integer.MAX_VALUE;
@@ -91,8 +95,8 @@ public class TFIDF extends KeywordExtractor{
 		return tags;
 	}
 	
-	public List<String> extractTagsWithoutWeights(String sentence) {
-		return extractTagsWithoutWeights(sentence,-1);
+	public List<String> extractTags(String sentence) {
+		return extractTags(sentence,-1);
 	}
 	
 	public List<KeywordWeightPair> extractTagsWithWeights(String sentence) {
@@ -134,12 +138,5 @@ public class TFIDF extends KeywordExtractor{
 		return sortList;
 	}
 	
-    public static void main(String[] args) {
-    	TFIDF tfidf = new TFIDF();
-    	String sentence = "我是拖拉机学院手扶拖拉机专业的。不用多久，我就会升职加薪，当上CEO，走上人生巅峰。";
-    	System.out.println(tfidf.extractTagsWithoutWeights(sentence,5).toString());
-    	System.out.println(tfidf.extractTagsWithWeights(sentence,5).toString());
-    	System.out.println(tfidf.extractTagsWithoutWeights(sentence).toString());
-    	System.out.println(tfidf.extractTagsWithWeights(sentence).toString());
-    }
+    
 }
