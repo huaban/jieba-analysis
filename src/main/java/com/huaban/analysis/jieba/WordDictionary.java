@@ -1,6 +1,7 @@
 package com.huaban.analysis.jieba;
 
 import java.io.BufferedReader;
+import java.io.Reader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -139,14 +140,37 @@ public class WordDictionary {
     }
 
 
-    public void loadUserDict(Path userDict) {
-        loadUserDict(userDict, StandardCharsets.UTF_8);
+
+    public void loadUserDict(Path userDict, Charset charset) {
+        try {
+            BufferedReader br = Files.newBufferedReader(userDict, charset);
+            loadUserDict(br);
+            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
+        } catch(IOException e) {
+            System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+        }
     }
 
 
-    public void loadUserDict(Path userDict, Charset charset) {                
+    public void loadUserDict(Path userDict) {
         try {
-            BufferedReader br = Files.newBufferedReader(userDict, charset);
+            BufferedReader br = Files.newBufferedReader(userDict, StandardCharsets.UTF_8);
+            loadUserDict(br);
+            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
+        } catch(IOException e) {
+             System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+        }
+    }
+
+
+    public void loadUserDict(Reader reader) throws IOException {
+        BufferedReader br = null;
+        try {
+            if(reader instanceof BufferedReader) {
+                br = (BufferedReader)reader;
+            } else {
+                br = new BufferedReader(reader);
+            }       
             long s = System.currentTimeMillis();
             int count = 0;
             while (br.ready()) {
@@ -162,11 +186,17 @@ public class WordDictionary {
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
-            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
-            br.close();
-        }
-        catch (IOException e) {
-            System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+            System.out.println(String.format(Locale.getDefault(), "load finished, tot words:%d, time elapsed:%dms",  count, System.currentTimeMillis() - s));
+        } catch (IOException e) {
+            throw e;        
+        } finally {
+            try {
+                if(reader != null) {
+                    reader.close();
+                }
+            } catch(IOException e) {
+
+            }
         }
     }
 
