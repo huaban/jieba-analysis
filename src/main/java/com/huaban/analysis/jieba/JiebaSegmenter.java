@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.huaban.analysis.jieba.viterbi.FinalSeg;
 
@@ -79,8 +80,15 @@ public class JiebaSegmenter {
         return route;
     }
 
-
-    public List<SegToken> process(String paragraph, SegMode mode) {
+    /**
+     *
+     * @param paragraph
+     * @param mode
+     * @param useHMM Whether to use the Hidden Markov Model
+     * @return
+     */
+    public List<SegToken> process(String paragraph, SegMode mode, Boolean useHMM) {
+        List<String> tokenList = new ArrayList<String>();
         List<SegToken> tokens = new ArrayList<SegToken>();
         StringBuilder sb = new StringBuilder();
         int offset = 0;
@@ -90,14 +98,15 @@ public class JiebaSegmenter {
                 sb.append(ch);
             else {
                 if (sb.length() > 0) {
+                    tokenList = useHMM ? sentenceProcess(sb.toString()) : sentenceProcessWithNoHMM(sb.toString());
                     // process
                     if (mode == SegMode.SEARCH) {
-                        for (String word : sentenceProcess(sb.toString())) {
+                        for ( String word : tokenList ) {
                             tokens.add(new SegToken(word, offset, offset += word.length()));
                         }
                     }
                     else {
-                        for (String token : sentenceProcess(sb.toString())) {
+                        for ( String token : tokenList ) {
                             if (token.length() > 2) {
                                 String gram2;
                                 int j = 0;
@@ -128,14 +137,15 @@ public class JiebaSegmenter {
                     tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset));
             }
         }
-        if (sb.length() > 0)
+        if (sb.length() > 0) {
+            tokenList = useHMM ? sentenceProcess(sb.toString()) : sentenceProcessWithNoHMM(sb.toString());
+
             if (mode == SegMode.SEARCH) {
-                for (String token : sentenceProcess(sb.toString())) {
+                for ( String token : tokenList ) {
                     tokens.add(new SegToken(token, offset, offset += token.length()));
                 }
-            }
-            else {
-                for (String token : sentenceProcess(sb.toString())) {
+            } else {
+                for ( String token : tokenList ) {
                     if (token.length() > 2) {
                         String gram2;
                         int j = 0;
@@ -157,13 +167,14 @@ public class JiebaSegmenter {
                     tokens.add(new SegToken(token, offset, offset += token.length()));
                 }
             }
+        }
 
         return tokens;
     }
 
 
     /*
-     * 
+     *
      */
     public List<String> sentenceProcess(String sentence) {
         List<String> tokens = new ArrayList<String>();
@@ -214,6 +225,44 @@ public class JiebaSegmenter {
                 }
             }
 
+        }
+        return tokens;
+    }
+
+    /**
+     *
+     */
+    public List<String> sentenceProcessWithNoHMM(String sentence) {
+        List<String> tokens = new ArrayList<String>();
+        int N = sentence.length();
+        Map<Integer, List<Integer>> dag = createDAG(sentence);
+        Map<Integer, Pair<Integer>> route = calc(sentence, dag);
+        int x = 0;
+        int y = 0;
+        String buf;
+        StringBuilder sb = new StringBuilder();
+        while (x < N) {
+            y = route.get(x).key + 1;
+            String lWord = sentence.substring(x, y);
+
+            if ( Pattern.compile("[a-zA-Z0-9]").matcher(lWord).find() && lWord.length() == 1 ) {
+                sb.append(lWord);
+                x = y;
+            } else {
+                if (sb.length() > 0) {
+                    tokens.add(sb.toString());
+                    sb.setLength(0);
+                }
+                tokens.add(lWord);
+                x = y;
+            }
+
+        }
+
+        buf = sb.toString();
+        if (buf.length() > 0) {
+            tokens.add(sb.toString());
+            sb.setLength(0);
         }
         return tokens;
     }
