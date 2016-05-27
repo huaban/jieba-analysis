@@ -17,5 +17,7 @@ public class BaseDemo {
         for (String sentence : sentences) {
             System.out.println(segmenter.process(sentence, JiebaSegmenter.SegMode.INDEX).toString());
         }
+
+
     }
 }
