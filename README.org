@@ -1,4 +1,4 @@
-* alter by xuming 20160601
+o* alter by xuming 20160601
   结巴分词(java版)只保留的原项目针对搜索引擎分词的功能(cut_for_index、cut_for_search).
   词性标注，关键词提取没有实现(今后如用到，可以考虑实现)。
 
