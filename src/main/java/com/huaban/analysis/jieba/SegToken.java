@@ -15,9 +15,14 @@ public class SegToken {
     }
 
 
+//    @Override
+//    public String toString() {
+//        return "[" + word + ", " + startOffset + ", " + endOffset + "]";
+//    }
+
     @Override
     public String toString() {
-        return "[" + word + ", " + startOffset + ", " + endOffset + "]";
+        return  word  ;
     }
 
 }
