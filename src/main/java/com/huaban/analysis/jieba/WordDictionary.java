@@ -29,6 +29,10 @@ public class WordDictionary {
     private DictSegment _dict;
 
 
+    // 词性.需要在词性识别之后才会有值,默认是空
+    private String nature = "";
+
+
     private WordDictionary() {
         this.loadDict();
     }
@@ -101,6 +105,7 @@ public class WordDictionary {
 
                 String word = tokens[0];
                 double freq = Double.valueOf(tokens[1]);
+//                String nature = tokens[3];
                 total += freq;
                 word = addWord(word);
                 freqs.put(word, freq);
