@@ -1,11 +1,14 @@
 package com.huaban.analysis.jieba.Demo;
 
 import com.huaban.analysis.jieba.JiebaSegmenter;
+import com.huaban.analysis.jieba.SegToken;
+
+import java.util.List;
 
 /**
  * Created by xuming on 2016/5/27.
  */
-public class userDictDemo {
+public class natureDemo {
 
     public static void main(String[] args){
 
@@ -24,7 +27,10 @@ public class userDictDemo {
                         "珠海市德兴达文具有限公司\n" +
                         "东海县迅捷贸易有限责任公司"};
         for (String sentence : sentences) {
-
+            List<SegToken> segList = segmenter.process(sentence, JiebaSegmenter.SegMode.SEARCH);
+            for(SegToken i : segList){
+                String a = i.word;
+            }
             System.out.println(segmenter.process(sentence, JiebaSegmenter.SegMode.SEARCH).toString());
         }
 

@@ -93,7 +93,7 @@ public class JiebaSegmenter {
                     // process
                     if (mode == SegMode.SEARCH) {
                         for (String word : sentenceProcess(sb.toString())) {
-                            tokens.add(new SegToken(word, offset, offset += word.length()));
+                            tokens.add(new SegToken(word, offset, offset += word.length(), wordDict.getNature(word) ));
                         }
                     }
                     else {
@@ -131,7 +131,7 @@ public class JiebaSegmenter {
         if (sb.length() > 0)
             if (mode == SegMode.SEARCH) {
                 for (String token : sentenceProcess(sb.toString())) {
-                    tokens.add(new SegToken(token, offset, offset += token.length()));
+                    tokens.add(new SegToken(token, offset, offset += token.length(), wordDict.getNature(token)));
                 }
             }
             else {
