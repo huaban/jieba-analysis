@@ -1,11 +1,11 @@
 package com.huaban.analysis.jieba;
 
+import com.huaban.analysis.jieba.viterbi.FinalSeg;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.huaban.analysis.jieba.viterbi.FinalSeg;
 
 
 public class JiebaSegmenter {
@@ -162,8 +162,14 @@ public class JiebaSegmenter {
     }
 
 
-    /*
-     * 
+    /**
+     *
+     * @Title: 单独对每句话分词处理
+     * @Author: xuming
+     * @Description: 
+     * @date:2016/6/7 11:17
+     * @param 
+     * @return 
      */
     public List<String> sentenceProcess(String sentence) {
         List<String> tokens = new ArrayList<String>();
