@@ -104,7 +104,7 @@ public class JiebaSegmenter {
                                 for (; j < token.length() - 1; ++j) {
                                     gram2 = token.substring(j, j + 2);
                                     if (wordDict.containsWord(gram2))
-                                        tokens.add(new SegToken(gram2, offset + j, offset + j + 2));
+                                        tokens.add(new SegToken(gram2, offset + j, offset + j + 2,wordDict.getNature(gram2)));
                                 }
                             }
                             if (token.length() > 3) {
@@ -113,19 +113,19 @@ public class JiebaSegmenter {
                                 for (; j < token.length() - 2; ++j) {
                                     gram3 = token.substring(j, j + 3);
                                     if (wordDict.containsWord(gram3))
-                                        tokens.add(new SegToken(gram3, offset + j, offset + j + 3));
+                                        tokens.add(new SegToken(gram3, offset + j, offset + j + 3,wordDict.getNature(gram3)));
                                 }
                             }
-                            tokens.add(new SegToken(token, offset, offset += token.length()));
+                            tokens.add(new SegToken(token, offset, offset += token.length(),wordDict.getNature(token)));
                         }
                     }
                     sb = new StringBuilder();
                     offset = i;
                 }
                 if (wordDict.containsWord(paragraph.substring(i, i + 1)))
-                    tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset));
+                    tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset,wordDict.getNature(paragraph)));
                 else
-                    tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset));
+                    tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset,wordDict.getNature(paragraph)));
             }
         }
         if (sb.length() > 0)
@@ -142,7 +142,7 @@ public class JiebaSegmenter {
                         for (; j < token.length() - 1; ++j) {
                             gram2 = token.substring(j, j + 2);
                             if (wordDict.containsWord(gram2))
-                                tokens.add(new SegToken(gram2, offset + j, offset + j + 2));
+                                tokens.add(new SegToken(gram2, offset + j, offset + j + 2,wordDict.getNature(gram2)));
                         }
                     }
                     if (token.length() > 3) {
@@ -151,10 +151,10 @@ public class JiebaSegmenter {
                         for (; j < token.length() - 2; ++j) {
                             gram3 = token.substring(j, j + 3);
                             if (wordDict.containsWord(gram3))
-                                tokens.add(new SegToken(gram3, offset + j, offset + j + 3));
+                                tokens.add(new SegToken(gram3, offset + j, offset + j + 3,wordDict.getNature(gram3)));
                         }
                     }
-                    tokens.add(new SegToken(token, offset, offset += token.length()));
+                    tokens.add(new SegToken(token, offset, offset += token.length(),wordDict.getNature(token)));
                 }
             }
 

@@ -28,7 +28,7 @@ public class userDictDemo {
                         "东海县迅捷贸易有限责任公司"};
         for (String sentence : sentences) {
 
-            System.out.println(segmenter.process(sentence, JiebaSegmenter.SegMode.SEARCH).toString());
+            System.out.println(segmenter.process(sentence, JiebaSegmenter.SegMode.INDEX).toString());
         }
 
 
