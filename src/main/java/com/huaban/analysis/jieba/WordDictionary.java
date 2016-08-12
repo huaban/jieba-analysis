@@ -23,15 +23,10 @@ public class WordDictionary {
     private static String USER_DICT_SUFFIX = ".dict";
 
     public final Map<String, Double> freqs = new HashMap<String, Double>();
-    public final Map<String, String> natures = new HashMap<String, String>();
     public final Set<String> loadedPath = new HashSet<String>();
     private Double minFreq = Double.MAX_VALUE;
     private Double total = 0.0;
     private DictSegment _dict;
-
-
-    // 词性.需要在词性识别之后才会有值,默认是空
-    private String nature = "";
 
 
     private WordDictionary() {
@@ -106,11 +101,9 @@ public class WordDictionary {
 
                 String word = tokens[0];
                 double freq = Double.valueOf(tokens[1]);
-                String nature = String.valueOf(tokens[2]);
                 total += freq;
                 word = addWord(word);
                 freqs.put(word, freq);
-                natures.put(word, nature);
             }
             // normalize
             for (Entry<String, Double> entry : freqs.entrySet()) {
@@ -174,7 +167,7 @@ public class WordDictionary {
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
-            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, total words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
+            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
             br.close();
         }
         catch (IOException e) {
@@ -192,22 +185,11 @@ public class WordDictionary {
         return freqs.containsKey(word);
     }
 
-    public boolean containsNature(String word) {
-        return natures.containsKey(word);
-    }
-
 
     public Double getFreq(String key) {
         if (containsWord(key))
             return freqs.get(key);
         else
             return minFreq;
-    }
-
-    public String getNature(String key) {
-        if (containsNature(key))
-            return natures.get(key);
-        else
-            return "";
     }
 }
