@@ -7,6 +7,7 @@ public class SegToken {
 
     public int endOffset;
 
+    public String nature;//add by xuming 20160607
 
     public SegToken(String word, int startOffset, int endOffset) {
         this.word = word;
@@ -14,10 +15,21 @@ public class SegToken {
         this.endOffset = endOffset;
     }
 
+    public SegToken(String word, int startOffset, int endOffset,String nature) {
+        this.word = word;
+        this.startOffset = startOffset;
+        this.endOffset = endOffset;
+        this.nature = nature;
+    }
+
+//    @Override
+//    public String toString() {
+//        return "[" + word + ", " + startOffset + ", " + endOffset + "]";
+//    }
 
     @Override
     public String toString() {
-        return "[" + word + ", " + startOffset + ", " + endOffset + "]";
+        return word + "/" + nature;
     }
 
 }
