@@ -1,21 +1,16 @@
 package com.huaban.analysis.jieba.viterbi;
 
+import com.huaban.analysis.jieba.CharacterUtil;
+import com.huaban.analysis.jieba.Node;
+import com.huaban.analysis.jieba.Pair;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
-import java.util.Collections;
-
-import com.huaban.analysis.jieba.CharacterUtil;
-import com.huaban.analysis.jieba.Pair;
-import com.huaban.analysis.jieba.Node;
 
 
 public class FinalSeg {
@@ -26,7 +21,7 @@ public class FinalSeg {
     private static Map<Character, Double> start;
     private static Map<Character, Map<Character, Double>> trans;
     private static Map<Character, char[]> prevStatus;
-    private static Double MIN_FLOAT = -3.14e100;;
+    private static Double MIN_FLOAT = -3.14e100;
 
 
     private FinalSeg() {

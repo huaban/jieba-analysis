@@ -99,7 +99,7 @@ public class JiebaSegmenter {
                                 int j = 0;
                                 for (; j < token.length() - 1; ++j) {
                                     gram2 = token.substring(j, j + 2);
-                                    if (wordDict.containsWord(gram2))
+                                    if (wordDict.containsWord(gram2)) //wordDict is the core.txt ; if the gram2 in resources/core.txt
                                         tokens.add(new SegToken(gram2, offset + j, offset + j + 2, wordDict.getNature(gram2)));
                                 }
                             }
