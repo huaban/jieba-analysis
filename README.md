@@ -133,7 +133,7 @@ Memory：8GB
 
 **请我喝一杯**
 
-![](http://7xkgzh.com1.z0.glb.clouddn.com/0a9db33a25bce898c088462ddb726e57.png?imageView2/5/w/300/h/300)
+![](http://7xkgzh.com1.z0.glb.clouddn.com/01e2fc2635f7ac26a9e8b21157dc2840.png?imageView2/5/w/300/h/300)
 
 **或者随君意**
 
