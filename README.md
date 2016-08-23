@@ -129,15 +129,15 @@ Memory：8GB
 
 **一顿黄焖鸡**
 
-![](http://7xkgzh.com1.z0.glb.clouddn.com/0a9db33a25bce898c088462ddb726e57.png)IMG_3537.JPG
+![](http://7xkgzh.com1.z0.glb.clouddn.com/0a9db33a25bce898c088462ddb726e57.png?imageView2/5/w/300/h/300)
 
 **请我喝一杯**
 
-![](http://7xkgzh.com1.z0.glb.clouddn.com/0a9db33a25bce898c088462ddb726e57.png)IMG_3537.JPG
+![](http://7xkgzh.com1.z0.glb.clouddn.com/0a9db33a25bce898c088462ddb726e57.png?imageView2/5/w/300/h/300)
 
 **或者随君意**
 
-![](http://7xkgzh.com1.z0.glb.clouddn.com/2344d83c9be4b56cb66f696dcfb25ceb.png)IMG_3540.JPG
+![](http://7xkgzh.com1.z0.glb.clouddn.com/2344d83c9be4b56cb66f696dcfb25ceb.png?imageView2/5/w/300/h/300)
 
 
 许可证
