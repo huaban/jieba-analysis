@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by xuming on 2016/5/27.
  */
-public class natureDemo {
+public class NatureDemo {
 
     public static void main(String[] args){
 
