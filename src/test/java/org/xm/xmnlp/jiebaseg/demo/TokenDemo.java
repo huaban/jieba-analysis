@@ -12,7 +12,7 @@ public class TokenDemo {
 
     public static void main(String[] args) {
         Segmenter segmenter = new Segmenter();
-        String sentence = "他在普林思工作，你不懂电钻干嘛？金融有限公司。结婚的和尚未结婚的刘翔都很好。你知道他是刘禹锡吗？";
+        String sentence = "他在普林思工作,金融有限公司。结婚的和尚未结婚的刘翔都很好。你知道他是刘禹锡吗？";
         List<Token> segList = segmenter.process(sentence);
         for (Token i : segList) {
             String word = i.word;
