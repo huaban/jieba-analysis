@@ -9,14 +9,16 @@ public class Token {
     public int startOffset;
     public int endOffset;
     public String nature;
-    public Token(String word,int startOffset,int endOffset,String nature){
+
+    public Token(String word, int startOffset, int endOffset, String nature) {
         this.word = word;
-        this.startOffset  = startOffset;
+        this.startOffset = startOffset;
         this.endOffset = endOffset;
         this.nature = nature;
     }
+
     @Override
-    public String toString(){
-        return "["+word+", "+nature+"]";
+    public String toString() {
+        return  word + "/" + nature ;
     }
 }

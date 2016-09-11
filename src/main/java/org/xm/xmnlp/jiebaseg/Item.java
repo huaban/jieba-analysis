@@ -6,18 +6,18 @@ package org.xm.xmnlp.jiebaseg;
 public class Item<K> {
     public K key;
     public Double freq = 0.0;
-    public String nature = "";
+//    public String nature = "";
 
     public Item(K key, double freq) {
         this.key = key;
         this.freq = freq;
     }
 
-    public Item(K key, double freq, String nature) {
+    /*public Item(K key, double freq, String nature) {
         this.key = key;
         this.freq = freq;
         this.nature = nature;
-    }
+    }*/
 
 //    @Override
 //    public String toString() {

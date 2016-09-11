@@ -9,8 +9,8 @@ import java.util.Map;
  * Created by mingzai on 2016/9/10.
  */
 public class Segmenter {
-
     private static Dict wordDict = Dict.getInstance();
+    private FinalSegmenter  finalSegmenter = FinalSegmenter.getInstance();
 
     private Map<Integer, List<Integer>> createDAG(String sentence) {
         Map<Integer, List<Integer>> dag = new HashMap<>();
@@ -55,7 +55,7 @@ public class Segmenter {
     private Map<Integer, Item<Integer>> calcRoute(String sentence, Map<Integer, List<Integer>> dag) {
         HashMap<Integer, Item<Integer>> route = new HashMap<>();
         int N = sentence.length();
-        route.put(N, new Item(0, 0.0, ""));
+        route.put(N, new Item(0, 0.0));
         for (int i = N - 1; i > -1; i--) {
             Item<Integer> item = null;
             for (Integer x : dag.get(i)) {
@@ -63,11 +63,10 @@ public class Segmenter {
                 double freq = wordDict.getFreq(key) + route.get(x + 1).freq;
                 String nature = wordDict.getNature(key);
                 if (null == item) {
-                    item = new Item(x, freq, nature);
+                    item = new Item(x, freq);
                 } else if (item.freq < freq) {
                     item.freq = freq;
                     item.key = x;
-                    item.nature = nature;
                 }
             }
             route.put(i, item);
@@ -97,8 +96,7 @@ public class Segmenter {
                 if (wordDict.containsWord(key)) {
                     tokens.add(new Token(key, offset, ++offset, wordDict.getNature(key)));
                 } else {
-                    // not in dict
-//                    System.out.print("not in dict:" + paragraph.substring(i, i + 1));
+                    // not in dict , most is punctuation
                     tokens.add(new Token(key, offset, ++offset, wordDict.getNature(key)));
                 }
             }
@@ -152,8 +150,7 @@ public class Segmenter {
                 tokens.add(buf);
             } else {
                 // not in dict
-//                System.out.print(buf);
-                tokens.add(buf);
+                finalSegmenter.cut(buf, tokens);
             }
 
         }
