@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xm.xmnlp.word.dictionary.impl.DictionaryTrie;
 import org.xm.xmnlp.word.recognition.PersonName;
+import org.xm.xmnlp.word.util.DictionaryUtil;
 import org.xm.xmnlp.word.util.WordConfTools;
 
 import java.nio.file.Files;
@@ -38,7 +39,7 @@ public class DictionaryFactory {
 
         private static Dictionary constructDictionary() {
             try {
-                String dicClass = WordConfTools.get("dic.class", "org.xm.xmnlp.word.dictionary.impl.DoubleArrayDictionaryTrie");
+                String dicClass = WordConfTools.get("dic.class", "org.xm.xmnlp.word.dictionary.impl.DictionaryTrie");
                 LOGGER.info("dic.class = " + dicClass);
                 return (Dictionary) Class.forName(dicClass.trim()).newInstance();
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -51,90 +52,94 @@ public class DictionaryFactory {
             reload();
         }
 
+        private static final String PATH = "/dic.txt";
+
         public static void reload() {
-
-
+            if (DIC == null || DIC.isEmpty()) {
+                load(DictionaryUtil.loadDictionaryFile(PATH));
+            }
         }
 
-        public void clear() {
+        public static void clear() {
             DIC.clear();
         }
 
-        public void load(List<String> lines) {
+        public static void load(List<String> lines) {
             LOGGER.info("init dictionary...");
             long start = System.currentTimeMillis();
             int count = 0;
-            for(String surname: PersonName.getSurnames()){
-                if(surname.length() ==2){
-                    count ++;
+            for (String surname : PersonName.getSurnames()) {
+                if (surname.length() == 2) {
+                    count++;
                     lines.add(surname);
                 }
             }
-            LOGGER.info("add "+count + "surname to dictionary");
+            LOGGER.info("add " + count + "surname to dictionary");
             List<String> words = getAllWords(lines);
             lines.clear();
             String dicDumpPath = WordConfTools.get("dic.dump.path");
-            if(dicDumpPath!=null && dicDumpPath.length() >0){
-                try{
-                    Files.write(Paths.get(dicDumpPath),words);
-                }catch (Exception e ){
-                    LOGGER.error("dic dump error.",e);
+            if (dicDumpPath != null && dicDumpPath.length() > 0) {
+                try {
+                    Files.write(Paths.get(dicDumpPath), words);
+                } catch (Exception e) {
+                    LOGGER.error("dic dump error.", e);
                 }
             }
             DIC.addAll(words);
             ShowStatistics(words);
-            if(DIC instanceof DictionaryTrie){
-                DictionaryTrie dictionaryTrie= (DictionaryTrie) DIC;
+            if (DIC instanceof DictionaryTrie) {
+                DictionaryTrie dictionaryTrie = (DictionaryTrie) DIC;
                 dictionaryTrie.showConflict();
             }
             System.gc();
-            LOGGER.info("init dictionary finished, spend time:"+(System.currentTimeMillis() -start)+" ms");
+            LOGGER.info("init dictionary finished, spend time:" + (System.currentTimeMillis() - start) + " ms");
         }
-        private void ShowStatistics(List<String> words){
-            Map<Integer,AtomicInteger> map = new HashMap<>();
-            words.forEach(i ->{
-                map.putIfAbsent(i.length(),new AtomicInteger());
+
+        private static void ShowStatistics(List<String> words) {
+            Map<Integer, AtomicInteger> map = new HashMap<>();
+            words.forEach(i -> {
+                map.putIfAbsent(i.length(), new AtomicInteger());
                 map.get(i.length()).incrementAndGet();
             });
             int wordCount = 0;
             int totalLength = 0;
-            for(int len :map.keySet()){
-                totalLength +=len*map.get(len).get();
-                wordCount +=map.get(len).get();
+            for (int len : map.keySet()) {
+                totalLength += len * map.get(len).get();
+                wordCount += map.get(len).get();
             }
-            LOGGER.info("word count:"+wordCount+", maxlength of dictionary:"+DIC.getMaxLength());
-            for(int len: map.keySet()){
-                if(len<10){
-                    LOGGER.info("word length :" + len +" the num of it:"+map.get(len));
-                }else{
-                    LOGGER.info("word length :" + len +" the num of it:"+map.get(len));
+            LOGGER.info("word count:" + wordCount + ", maxlength of dictionary:" + DIC.getMaxLength());
+            for (int len : map.keySet()) {
+                if (len < 10) {
+                    LOGGER.info("word length :" + len + " the num of it:" + map.get(len));
+                } else {
+                    LOGGER.info("word length :" + len + " the num of it:" + map.get(len));
                 }
             }
             LOGGER.info("average length of word ：" + (float) totalLength / wordCount);
 
         }
 
-        private List<String> getWords(String line){
+        private static List<String> getWords(String line) {
             List<String> words = new ArrayList<>();
-            for(String word: line.split("\\s+")){
-                if(word.length() >2 && word.contains(":")){
+            for (String word : line.split("\\s+")) {
+                if (word.length() > 2 && word.contains(":")) {
                     String[] attr = word.split(":");
-                    if(attr !=null && attr.length >1){
+                    if (attr != null && attr.length > 1) {
                         word = attr[0];
-                    }else{
+                    } else {
                         word = null;
                     }
                 }
-                if(word!=null){
+                if (word != null) {
                     words.add(word);
                 }
             }
             return words;
         }
 
-        private List<String> getAllWords(List<String> lines){
-            return lines.stream().flatMap(line ->getWords(line).stream())
-                    .filter(w->w.length() <= INTERCEPT_LENGTH)
+        private static List<String> getAllWords(List<String> lines) {
+            return lines.stream().flatMap(line -> getWords(line).stream())
+                    .filter(w -> w.length() <= INTERCEPT_LENGTH)
                     .collect(Collectors.toSet())
                     .stream()
                     .sorted()

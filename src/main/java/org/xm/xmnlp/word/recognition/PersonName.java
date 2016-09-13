@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.xm.xmnlp.word.segmentation.PartOfSpeech;
 import org.xm.xmnlp.word.segmentation.Word;
 import org.xm.xmnlp.word.tagging.PartOfSpeechTagging;
+import org.xm.xmnlp.word.util.DictionaryUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,17 +25,21 @@ public class PersonName {
         reload();
     }
 
-    public static void reload() {
+    private static final String PATH = "/surname.txt";
 
+    public static void reload() {
+        if (SURNAME_1 == null || SURNAME_1.isEmpty()) {
+            load(DictionaryUtil.loadDictionaryFile(PATH));
+        }
     }
 
-    public void clear() {
+    public static void clear() {
         SURNAME_1.clear();
         SURNAME_2.clear();
         POS_SEQ.clear();
     }
 
-    public void load(List<String> lines) {
+    public static void load(List<String> lines) {
         LOGGER.info("init person name");
         for (String line : lines) {
             add(line);
@@ -42,7 +47,7 @@ public class PersonName {
         LOGGER.info("init person name finished, single surname num:" + SURNAME_1.size() + ", double surname num:" + SURNAME_2.size());
     }
 
-    public void add(String line) {
+    public static void add(String line) {
         if (line.length() == 1) {
             SURNAME_1.add(line);
         } else if (line.length() == 2) {
@@ -55,7 +60,7 @@ public class PersonName {
         }
     }
 
-    public void remove(String line) {
+    public static void remove(String line) {
         if (line.length() == 1) {
             SURNAME_1.remove(line);
         } else if (line.length() == 2) {
@@ -217,17 +222,17 @@ public class PersonName {
         return result;
     }
 
-    public static void main(String[] args){
-        int i=1;
-        for(String str : SURNAME_1){
-            LOGGER.info((i++)+" : "+str);
+    public static void main(String[] args) {
+        int i = 1;
+        for (String str : SURNAME_1) {
+            LOGGER.info((i++) + " : " + str);
         }
-        for(String str : SURNAME_2){
-            LOGGER.info((i++)+" : "+str);
+        for (String str : SURNAME_2) {
+            LOGGER.info((i++) + " : " + str);
         }
-        LOGGER.info("杨尚川："+isPersonName("杨尚川"));
-        LOGGER.info("欧阳飞燕："+isPersonName("欧阳飞燕"));
-        LOGGER.info("令狐冲："+isPersonName("令狐冲"));
+        LOGGER.info("杨尚川：" + isPersonName("杨尚川"));
+        LOGGER.info("欧阳飞燕：" + isPersonName("欧阳飞燕"));
+        LOGGER.info("令狐冲：" + isPersonName("令狐冲"));
         List<Word> test = new ArrayList<>();
         test.add(new Word("快"));
         test.add(new Word("来"));

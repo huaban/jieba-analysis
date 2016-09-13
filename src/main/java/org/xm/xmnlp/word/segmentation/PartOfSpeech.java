@@ -2,6 +2,7 @@ package org.xm.xmnlp.word.segmentation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xm.xmnlp.word.util.DictionaryUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,22 +24,22 @@ public class PartOfSpeech {
 
     private static class PartOfSpeechMap {
         private static final Map<String, PartOfSpeech> POS = new HashMap<>();
-
+        private static final String PATH = "/part_of_speech_des.txt";
         static {
-            init();
+            reload();
         }
 
-        private static void init() {
-//            String desConf = WordConfTools.get("part.of.speech.des.path", "classpath:part_of_speech_des.text");
-//            add(desConf);
-            System.out.println("init");
+        public static void reload() {
+            if (POS == null || POS.isEmpty()) {
+                load(DictionaryUtil.loadDictionaryFile(PATH));
+            }
         }
 
-        public void clear() {
+        public static void clear() {
             POS.clear();
         }
 
-        public void load(List<String> lines) {
+        public static void load(List<String> lines) {
             LOGGER.info("init POS...");
             int count = 0;
             for (String line : lines) {
@@ -62,7 +63,7 @@ public class PartOfSpeech {
             }
         }
 
-        public void remove(String line) {
+        public static void remove(String line) {
             try {
                 String[] attr = line.split("=");
                 POS.remove(attr[0]);

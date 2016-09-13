@@ -21,4 +21,6 @@ public interface Dictionary {
     void remove(String item);
 
     void clear();
+
+    boolean isEmpty();
 }

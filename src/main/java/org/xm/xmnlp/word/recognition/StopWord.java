@@ -3,64 +3,42 @@ package org.xm.xmnlp.word.recognition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xm.xmnlp.word.segmentation.Word;
-import org.xm.xmnlp.word.util.WordConfTools;
+import org.xm.xmnlp.word.util.DictionaryUtil;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by mingzai on 2016/9/11.
  */
 public class StopWord {
     private static final Logger LOGGER = LoggerFactory.getLogger(StopWord.class);
-
     private static final Set<String> stopwords = new HashSet<>();
-
+    public static Set<String> getStopwords() {
+        return stopwords;
+    }
+    private static final String PATH = "/stopwords.txt";
     static {
         reload();
     }
 
     public static void reload() {
         if (stopwords == null||stopwords.isEmpty()) {
-            loadStopWord();
+            load(DictionaryUtil.loadDictionaryFile(PATH));
         }
 
     }
 
-    public static void loadStopWord() {
+    public static void load(List<String> lines) {
         LOGGER.info("初始化停用词");
-        String str = WordConfTools.get("stopwords.path", "classpath:stopwords.txt");
-        String path = str.replace("classpath:", "/stopwords.txt");
-        InputStream is = StopWord.class.getResourceAsStream(path);
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-        try {
-            long start = System.currentTimeMillis();
-            while (br.ready()) {
-                String line = br.readLine().trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
-                if (!isStopChar(line)) {
-                    stopwords.add(line);
-                }
-            }
-            LOGGER.info(String.format(Locale.getDefault(), "stopword dict load finished,spend %d ms,count num:%d ",
-                    System.currentTimeMillis() - start,stopwords.size()));
-
-        } catch (IOException e) {
-            LOGGER.info("stopword dict load failure!" + path);
-        } finally {
-            try {
-                if (null != br) br.close();
-                if (null != is) is.close();
-            } catch (IOException e) {
-                LOGGER.info(String.format(Locale.getDefault(), "%s close failure !", path));
+        for(String line : lines){
+            if(!isStopChar(line)){
+                stopwords.add(line);
             }
         }
+        LOGGER.info("停用词初始化完毕，停用词个数："+stopwords.size());
     }
 
     private static boolean isStopChar(String word) {

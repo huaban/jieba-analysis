@@ -14,7 +14,7 @@ public class DictionaryTrie implements Dictionary {
     private static final Logger LOGGER = LoggerFactory.getLogger(DictionaryTrie.class);
     private static final int INDEX_LENGTH = WordConfTools.getInt("dictionary.trie.index.size", 24000);
     private static final TrieNode[] ROOT_NODES_INDEX = new TrieNode[INDEX_LENGTH];
-    private int maxLength;
+    private int maxLength = 0;
 
     public DictionaryTrie() {
         LOGGER.info("init dictionary:" + this.getClass().getName());
@@ -80,7 +80,7 @@ public class DictionaryTrie implements Dictionary {
         if (len > maxLength) {
             maxLength = len;
         }
-        TrieNode node = getRootNodeIfNotExist(item.charAt(0));
+        TrieNode node = getRootNodeIfNotExistThenCreate(item.charAt(0));
         for (int i = 1; i < len; i++) {
             char character = item.charAt(i);
             TrieNode child = node.getChildIfNotExist(character);
@@ -89,7 +89,7 @@ public class DictionaryTrie implements Dictionary {
         node.setTerminal(true);
     }
 
-    private TrieNode getRootNodeIfNotExist(char c) {
+    private TrieNode getRootNodeIfNotExistThenCreate(char c) {
         TrieNode trieNode = getRootNode(c);
         if (trieNode == null) {
             trieNode = new TrieNode(c);
@@ -169,6 +169,11 @@ public class DictionaryTrie implements Dictionary {
         for (int i = 0; i < INDEX_LENGTH; i++) {
             ROOT_NODES_INDEX[i] = null;
         }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getMaxLength() == 0;
     }
 
     private static class TrieNode implements Comparable {
