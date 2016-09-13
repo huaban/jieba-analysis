@@ -68,7 +68,7 @@ public class Punctuation {
         clear();
         load(lines);
     }
-    public void remove(String line){
+    public static void remove(String line){
         if(line.length() !=1){
             LOGGER.warn("length is diff:"+line);
             return;
@@ -88,8 +88,59 @@ public class Punctuation {
         clear();
         load(lines);
     }
+    public static boolean isPunctuation(char c){
+        int index = Arrays.binarySearch(chars,c);
+        return index>=0;
+    }
+    public static boolean has(String text){
+        for(char c :text.toCharArray()){
+            if(isPunctuation(c)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static List<String> seg(String text, boolean withPunctuation,char... reserve){
+        List<String> list = new ArrayList<>();
+        int start = 0;
+        char[] array = text.toCharArray();
+        int len=array.length;
+        for(int i = 0;i<len;i++){
+            char c = array[i];
+            for(char t:reserve){
+                if(c ==t){
+                    continue;
+                }
+            }
+            if(Punctuation.isPunctuation(c)){
+                if(i>start){
+                    list.add(text.substring(start,i));
+                    start =i+1;
+                }else {
+                    start++;
+                }
+                if(withPunctuation){
+                    list.add(Character.toString(c));
+                }
+            }
+        }
+        if(len - start > 0){
+            list.add(text.substring(start,len));
+        }
+        return list;
+    }
 
-    public static List<String> seg(String text, boolean keepWhitespace) {
-        return null;
+    public static void main(String[] args){
+        LOGGER.info("punctuation resource.");
+        LOGGER.info(",: "+isPunctuation('.'));
+        LOGGER.info("  : "+isPunctuation(' '));
+        LOGGER.info("　 : "+isPunctuation('　'));
+        LOGGER.info("\t : "+isPunctuation('\t'));
+        LOGGER.info("\n : "+isPunctuation('\n'));
+        String text= "于4年后即2012年4月9日在GITHUB开源 。SpringMVC在演化的过程中，经受住了众多项目的考验，一直追求简洁优雅，一直对架构、设计和代码进行重构优化。 ";
+        for(String s : Punctuation.seg(text, true)){
+            LOGGER.info(s);
+        }
+
     }
 }

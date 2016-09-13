@@ -21,7 +21,7 @@ public class Word implements Comparable {
         this.text = text;
     }
 
-    public Word(String text, PartOfSpeech partOfSpeech, int freq) {
+    public Word(String text, PartOfSpeech partOfSpeech, int frequency) {
         this.text = text;
         this.partOfSpeech = partOfSpeech;
         this.frequency = frequency;

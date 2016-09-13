@@ -230,7 +230,6 @@ public class PersonName {
         for (String str : SURNAME_2) {
             LOGGER.info((i++) + " : " + str);
         }
-        LOGGER.info("杨尚川：" + isPersonName("杨尚川"));
         LOGGER.info("欧阳飞燕：" + isPersonName("欧阳飞燕"));
         LOGGER.info("令狐冲：" + isPersonName("令狐冲"));
         List<Word> test = new ArrayList<>();
