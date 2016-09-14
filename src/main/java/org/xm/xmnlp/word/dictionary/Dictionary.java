@@ -22,5 +22,4 @@ public interface Dictionary {
 
     void clear();
 
-    boolean isEmpty();
 }

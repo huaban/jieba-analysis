@@ -171,11 +171,6 @@ public class DictionaryTrie implements Dictionary {
         }
     }
 
-    @Override
-    public boolean isEmpty() {
-        return getMaxLength() == 0;
-    }
-
     private static class TrieNode implements Comparable {
         private char character;
 

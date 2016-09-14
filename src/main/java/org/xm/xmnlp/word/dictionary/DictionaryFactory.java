@@ -55,7 +55,7 @@ public class DictionaryFactory {
         private static final String PATH = "/dic.txt";
 
         public static void reload() {
-            if (DIC == null || DIC.isEmpty()) {
+            if (DIC == null ) {
                 load(DictionaryUtil.loadDictionaryFile(PATH));
             }
         }

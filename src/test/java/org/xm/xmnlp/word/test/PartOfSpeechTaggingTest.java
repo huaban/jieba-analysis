@@ -7,7 +7,7 @@ import org.xm.xmnlp.word.tagging.PartOfSpeechTagging;
 import java.util.List;
 
 /**
- * Created by mingzai on 2016/9/13.
+ * Created by mingzai
  */
 public class PartOfSpeechTaggingTest {
     public static void main(String[] args){

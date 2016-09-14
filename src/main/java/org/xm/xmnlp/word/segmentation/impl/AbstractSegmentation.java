@@ -8,9 +8,7 @@ import org.xm.xmnlp.word.dictionary.Dictionary;
 import org.xm.xmnlp.word.dictionary.DictionaryFactory;
 import org.xm.xmnlp.word.recognition.PersonName;
 import org.xm.xmnlp.word.recognition.Punctuation;
-import org.xm.xmnlp.word.segmentation.DictionaryBasedSegmentation;
-import org.xm.xmnlp.word.segmentation.Word;
-import org.xm.xmnlp.word.segmentation.WordRefiner;
+import org.xm.xmnlp.word.segmentation.*;
 import org.xm.xmnlp.word.util.WordConfTools;
 
 import java.util.ArrayList;
@@ -135,16 +133,21 @@ public abstract class AbstractSegmentation implements DictionaryBasedSegmentatio
     }
 
     public static void main(String[] args) {
-//        Segmentation englishSeg = new AbstractSegmentation() {
-//            @Override
-//            public List<Word> segImpl(String text) {
-//                List<Word> words = new ArrayList<>();
-//                for(String word: text.split("\\s+")){
-//                    words.add(new Word(word));
-//                }
-//                return words;
-//            }
-//        };
-//        System.out.println(englishSeg.seg("i love programming "));
+        Segmentation englishSeg = new AbstractSegmentation() {
+            @Override
+            public SegmentationAlgorithm getSegmentationAlgorithm() {
+                return null;
+            }
+
+            @Override
+            public List<Word> segImpl(String text) {
+                List<Word> words = new ArrayList<>();
+                for(String word: text.split("\\s+")){
+                    words.add(new Word(word));
+                }
+                return words;
+            }
+        };
+        System.out.println(englishSeg.seg("i love programming "));
     }
 }
