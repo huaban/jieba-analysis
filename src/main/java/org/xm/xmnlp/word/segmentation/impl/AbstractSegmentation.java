@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Created by xuming
  */
 public abstract class AbstractSegmentation implements DictionaryBasedSegmentation {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSegmentation.class);
+    protected final Logger LOGGER = LoggerFactory.getLogger(AbstractSegmentation.class);
     private static final boolean PERSON_NAME_RECOGNIZE = WordConfTools.getBoolean("person.name.recognize", true);
     private static final boolean KEEP_WHITESPACE = WordConfTools.getBoolean("keep.punctuation", false);
     private static final boolean PARALLEL_SEG = WordConfTools.getBoolean("parallel.seg", true);
@@ -35,13 +35,11 @@ public abstract class AbstractSegmentation implements DictionaryBasedSegmentatio
         return PARALLEL_SEG;
     }
 
-    @Override
     public void setDictionary(Dictionary dictionary) {
         this.dictionary.clear();
         this.dictionary = dictionary;
     }
 
-    @Override
     public Dictionary getDictionary() {
         return dictionary;
     }
@@ -147,6 +145,6 @@ public abstract class AbstractSegmentation implements DictionaryBasedSegmentatio
 //                return words;
 //            }
 //        };
-//        System.out.println(englishSeg.seg("i love programming todo."));
+//        System.out.println(englishSeg.seg("i love programming "));
     }
 }

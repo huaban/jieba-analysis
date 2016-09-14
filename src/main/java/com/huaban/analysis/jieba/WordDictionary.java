@@ -63,7 +63,6 @@ public class WordDictionary {
         synchronized (WordDictionary.class) {
             if (loadedPath.contains(abspath))
                 return;
-            
             DirectoryStream<Path> stream;
             try {
                 stream = Files.newDirectoryStream(configFile, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
@@ -73,8 +72,6 @@ public class WordDictionary {
                 }
                 loadedPath.add(abspath);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
                 System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
             }
         }

@@ -7,6 +7,6 @@ import java.util.List;
  */
 public class WordRefiner {
     public static List<Word> process(List<Word> words) {
-        return null;
+        return words;
     }
 }

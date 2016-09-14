@@ -6,7 +6,7 @@ import org.xm.xmnlp.word.dictionary.Dictionary;
 /**
  * Created by xuming
  */
-public interface DictionaryBasedSegmentation {
+public interface DictionaryBasedSegmentation  extends Segmentation{
     void setDictionary(Dictionary dictionary);
 
     Dictionary getDictionary();
