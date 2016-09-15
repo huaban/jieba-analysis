@@ -147,13 +147,18 @@ public class PersonName {
         AtomicInteger i = new AtomicInteger();
         words.stream()
                 .forEach(word -> {
-                    LOGGER.info(i.incrementAndGet() + ",start deal with:" + word);
+                    if(LOGGER.isDebugEnabled()){
+                        LOGGER.debug(i.incrementAndGet() + ",start deal with:" + word);
+                    }
                     PartOfSpeechTagging.process(word);
                     StringBuilder seq = new StringBuilder();
                     word.forEach(w -> seq.append(w.getPartOfSpeech().getPos().charAt(0)).append(" "));
                     String seqStr = seq.toString();
                     AtomicInteger score = new AtomicInteger();
-                    LOGGER.info("词序列：{} 的词序列：{}", word, seqStr);
+                    if(LOGGER.isDebugEnabled()){
+                        LOGGER.debug("词序列：{} 的词序列：{}", word, seqStr);
+                    }
+
                     POS_SEQ.keySet().parallelStream().forEach(pos_seq -> {
                         if (seqStr.contains(pos_seq)) {
                             int sc = POS_SEQ.get(pos_seq);
