@@ -1,5 +1,6 @@
 package org.xm.xmnlp.hanlp;
 
+import org.xm.xmnlp.hanlp.corpus.io.IIOAdapter;
 import org.xm.xmnlp.hanlp.seg.Segment;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class HanLP {
     public static final class Config{
         public static boolean ShowTermNature = true;
         public static boolean Normalization= false;
+        public static IIOAdapter IOAdapter;
         /**
          * 开发模式
          */

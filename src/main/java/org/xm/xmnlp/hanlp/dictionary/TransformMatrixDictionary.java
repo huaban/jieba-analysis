@@ -3,9 +3,9 @@ package org.xm.xmnlp.hanlp.dictionary;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import static org.xm.xmnlp.hanlp.utility.Predefine.logger;
-import static sun.text.normalizer.NormalizerImpl.convert;
 
 /**
  * @author xuming
@@ -39,7 +39,7 @@ public class TransformMatrixDictionary<E extends Enum<E>> {
                 ordinaryMax = Math.max(ordinaryMax, ordinaryArray[i]);
             }
             ++ordinaryMax;
-            matrix = new int[ordinaryMax][ordinaryArray];
+            matrix = new int[ordinaryMax][ordinaryMax];
             for (int i = 0; i < ordinaryMax; ++i) {
                 for (int j = 0; j < ordinaryMax; ++j) {
                     matrix[i][j] = 0;
@@ -53,6 +53,33 @@ public class TransformMatrixDictionary<E extends Enum<E>> {
                 }
             }
             br.close();
+            total = new int[ordinaryMax];
+            for (int j = 0; j < ordinaryMax; ++j) {
+                total[j] = 0;
+                for (int i = 0; i < ordinaryMax; ++i) {
+                    total[j] += matrix[i][j];
+                    total[j] += matrix[j][i];
+                }
+            }
+            for (int j = 0; j < ordinaryMax; ++j) {
+                total[j] -= matrix[j][j];
+            }
+            for (int j = 0; j < ordinaryMax; ++j) {
+                totalFrequency += total[j];
+            }
+            states = ordinaryArray;
+            start_probability = new double[ordinaryMax];
+            for (int s : states) {
+                double frequency = total[s] + 1e-8;
+                start_probability[s] = -Math.log(frequency / totalFrequency);
+            }
+            transition_probability = new double[ordinaryMax][ordinaryMax];
+            for (int from : states) {
+                for (int to : states) {
+                    double frequency = matrix[from][to] + 1e-8;
+                    transition_probability[from][to] = -Math.log(frequency / total[from]);
+                }
+            }
 
 
         } catch (Exception e) {
@@ -61,4 +88,57 @@ public class TransformMatrixDictionary<E extends Enum<E>> {
 
         return true;
     }
+
+    public int getFrequency(String from, String to) {
+        return getFrequency(convert(from), convert(to));
+    }
+
+    public int getFrequency(E from, E to) {
+        return matrix[from.ordinal()][to.ordinal()];
+    }
+
+    public int getTotalFrequency(E e) {
+        return total[e.ordinal()];
+    }
+
+    public int getTotalFrequency() {
+        return totalFrequency;
+    }
+
+    protected E convert(String label) {
+        return Enum.valueOf(enumType, label);
+    }
+
+    public void entendSize() {
+        ++ordinaryMax;
+        double[][] n_transition_probability = new double[ordinaryMax][ordinaryMax];
+        for (int i = 0; i < transition_probability.length; i++) {
+            System.arraycopy(transition_probability[i], 0, n_transition_probability[i], 0, transition_probability.length);
+        }
+        transition_probability = n_transition_probability;
+        int[] n_total = new int[ordinaryMax];
+        System.arraycopy(total, 0, n_total, 0, total.length);
+        total = n_total;
+        double[] n_start_probability = new double[ordinaryMax];
+        System.arraycopy(start_probability, 0, n_start_probability, 0, start_probability.length);
+        start_probability = n_start_probability;
+        int[][] n_matrix = new int[ordinaryMax][ordinaryMax];
+        for (int i = 0; i < matrix.length; i++) {
+            System.arraycopy(matrix[i], 0, n_matrix[i], 0, matrix.length);
+        }
+        matrix = n_matrix;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("TransfromMatrixDictionary{");
+        sb.append("enumType = ").append(enumType);
+        sb.append(", ordinaryMax = ").append(ordinaryMax);
+        sb.append(", matrix=").append(Arrays.toString(matrix));
+        sb.append(", toatl=").append(Arrays.toString(total));
+        sb.append(", totalFrequency=").append(totalFrequency);
+        sb.append('}');
+        return sb.toString();
+    }
+
 }

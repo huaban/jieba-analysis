@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * @author xuming
  */
 public class Predefine {
-    public static  String HANLP_PROPERTIES_PATH;
+    public static String HANLP_PROPERTIES_PATH;
     public final static double MIN_PROBABILITY = 1e-10;
     public final static int CT_SENTENCE_BEGIN = 1;        //Sentence begin
     public final static int CT_SENTENCE_END = 4;          //Sentence ending
@@ -26,7 +26,7 @@ public class Predefine {
 
     public static final int MAX_SEGMENT_NUM = 10;
     public static final int MAX_FREQUENCY = 2514057;
-    public static final double dTemp = (double)1/MAX_FREQUENCY +0.00001;
+    public static final double dTemp = (double) 1 / MAX_FREQUENCY + 0.00001;
     public static final double dSmoothingpara = 0.1;
     /**
      * 地址 ns
@@ -74,12 +74,13 @@ public class Predefine {
     public final static String TAG_PEOPLE = "未##人";
 
     public static Logger logger = Logger.getLogger("HanLP");
+
     static {
         logger.setLevel(Level.WARNING);
     }
 
-    public final static String TRIE_EXT=".trie.dat";
-    public final static String VALUE_EXT=".value.dat";
+    public final static String TRIE_EXT = ".trie.dat";
+    public final static String VALUE_EXT = ".value.dat";
     public final static String REVERSE_EXT = ".reverse";
     public final static String BIN_EXT = ".bin";
 
