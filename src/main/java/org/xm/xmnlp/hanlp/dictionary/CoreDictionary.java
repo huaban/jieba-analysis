@@ -1,20 +1,17 @@
 package org.xm.xmnlp.hanlp.dictionary;
 
 import org.xm.xmnlp.hanlp.HanLP;
+import org.xm.xmnlp.hanlp.collection.trie.DoubleArrayTrie;
 import org.xm.xmnlp.hanlp.corpus.io.ByteArray;
 import org.xm.xmnlp.hanlp.corpus.tag.Nature;
 import org.xm.xmnlp.hanlp.utility.LexiconUtility;
 import org.xm.xmnlp.hanlp.utility.Predefine;
 import org.xm.xmnlp.hanlp.utility.TextUtility;
-import sun.util.resources.cldr.ru.CurrencyNames_ru;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.TreeMap;
 
-import static org.xm.xmnlp.hanlp.corpus.tag.Nature.a;
-import static org.xm.xmnlp.hanlp.corpus.tag.Nature.c;
-import static org.xm.xmnlp.hanlp.corpus.tag.Nature.e;
 import static org.xm.xmnlp.hanlp.utility.Predefine.logger;
 
 /**
@@ -77,7 +74,7 @@ public class CoreDictionary {
                     out.writeInt(attribute.totalFrequency);
                     out.writeInt(attribute.nature.length);
                     for (int i = 0; i < attribute.nature.length; ++i) {
-                        out.writeInt(attribute.nature.ordinal());
+                        out.writeInt(attribute.nature[i].ordinal());
                         out.writeInt(attribute.frequency[i]);
                     }
                 }
@@ -226,6 +223,14 @@ public class CoreDictionary {
                 sb.append(nature[i]).append(' ').append(frequency[i]).append(' ');
             }
             return sb.toString();
+        }
+        public void save(DataOutputStream out)throws IOException{
+            out.writeInt(totalFrequency);
+            out.writeInt(nature.length);
+            for(int i =0;i<nature.length;++i){
+                out.writeInt(nature[i].ordinal());
+                out.writeInt(frequency[i]);
+            }
         }
     }
 }

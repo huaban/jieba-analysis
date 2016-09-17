@@ -1,10 +1,12 @@
 package org.xm.xmnlp.hanlp.seg;
 
 import org.xm.xmnlp.hanlp.collection.trie.DoubleArrayTrie;
+import org.xm.xmnlp.hanlp.collection.trie.bintrie.BaseNode;
 import org.xm.xmnlp.hanlp.dictionary.CoreDictionary;
+import org.xm.xmnlp.hanlp.dictionary.CustomDictionary;
 import org.xm.xmnlp.hanlp.dictionary.other.CharType;
 import org.xm.xmnlp.hanlp.seg.NShort.AtomNode;
-import sun.security.provider.certpath.Vertex;
+import org.xm.xmnlp.hanlp.seg.common.Vertex;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +46,7 @@ public abstract class Segment {
     }
 
     protected static List<Vertex> combineByCustomDictionary(List<Vertex> vertexList){
-        Vertex[] wordNet = new vertex[vertexList.size()];
+        Vertex[] wordNet = new Vertex[vertexList.size()];
         vertexList.toArray(wordNet);
         DoubleArrayTrie<CoreDictionary.Attribute> dat = CustomDictionary.dat;
         for(int i = 0;i<wordNet.length;++i){
@@ -75,7 +77,7 @@ public abstract class Segment {
                 }
             }
         }
-        if(CustomDictionay.trie !=null){
+        if(CustomDictionary.trie !=null){
             for(int i= 0;i<wordNet.length;++i){
                 if(wordNet[i] == null)continue;
                 BaseNode<CoreDictionary.Attribute> state = CustomDictionary.trie.transition(wordNet[i].realWord.toCharArray(),0);

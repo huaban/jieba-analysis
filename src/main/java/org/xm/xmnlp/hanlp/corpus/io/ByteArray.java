@@ -1,7 +1,7 @@
 package org.xm.xmnlp.hanlp.corpus.io;
 
 
-import sun.nio.ch.IOUtil;
+import org.xm.xmnlp.hanlp.utility.ByteUtil;
 
 import static org.xm.xmnlp.hanlp.utility.Predefine.logger;
 

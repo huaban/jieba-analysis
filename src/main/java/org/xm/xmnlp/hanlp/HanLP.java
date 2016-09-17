@@ -2,6 +2,7 @@ package org.xm.xmnlp.hanlp;
 
 import org.xm.xmnlp.hanlp.corpus.io.IIOAdapter;
 import org.xm.xmnlp.hanlp.seg.Segment;
+import org.xm.xmnlp.hanlp.seg.Viterbi.ViterbiSegment;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -141,34 +142,35 @@ public class HanLP {
                 logger.setLevel(Level.OFF);
             }
         }
-        public static String converToSimplifiedChinese(String trandtionalChineseString){
-            return TraditioinalChineseDictionary.convertToSimplifiedChinese(trandtionalChineseString.toCharArray());
-        }
-        public static String converToTraditionalChinese(String simplifiedChineseString){
-            return SimplifiedChineseDictionary.convertToTraditionalChinese(simplifiedChineseString);
-        }
-        public static List<Pinyin> convertToPinyinList(String text){
-            return PinyinDictionary.convertToPinyin(text);
-        }
         public static Segment newSegment(){
             return new ViterbiSegment();
         }
-        public static CoNLLSentence parseDependency(String sentence){
-            return NeuralNetworkDependencyParse.compute(sentence);
-        }
-        public static List<String> extractPhrase(String text,int size){
-            IPhraseExtractor extractor = new MutualInformationEntropyPhraseExtractor();
-            return extractor.extractPhrase(text,size);
-        }
-        public static List<String> extractKeyword (String document,int size){
-            return TextRankKeyword.getKeywordList(document,size);
-        }
-        public static List<String> extractSummary(String document,int size){
-            return TextRankSentence.getTopSentenceList(document,size);
-        }
-        public static String getSummary(String document,int maxLength){
-            return TextRankSentence.getSummary(document,maxLength);
-        }
+//        public static String converToSimplifiedChinese(String trandtionalChineseString){
+//            return TraditioinalChineseDictionary.convertToSimplifiedChinese(trandtionalChineseString.toCharArray());
+//        }
+//        public static String converToTraditionalChinese(String simplifiedChineseString){
+//            return SimplifiedChineseDictionary.convertToTraditionalChinese(simplifiedChineseString);
+//        }
+//        public static List<Pinyin> convertToPinyinList(String text){
+//            return PinyinDictionary.convertToPinyin(text);
+//        }
+//
+//        public static CoNLLSentence parseDependency(String sentence){
+//            return NeuralNetworkDependencyParse.compute(sentence);
+//        }
+//        public static List<String> extractPhrase(String text,int size){
+//            IPhraseExtractor extractor = new MutualInformationEntropyPhraseExtractor();
+//            return extractor.extractPhrase(text,size);
+//        }
+//        public static List<String> extractKeyword (String document,int size){
+//            return TextRankKeyword.getKeywordList(document,size);
+//        }
+//        public static List<String> extractSummary(String document,int size){
+//            return TextRankSentence.getTopSentenceList(document,size);
+//        }
+//        public static String getSummary(String document,int maxLength){
+//            return TextRankSentence.getSummary(document,maxLength);
+//        }
 
 
     }
