@@ -2,7 +2,10 @@ package org.xm.xmnlp.hanlp.corpus.util;
 
 import org.xm.xmnlp.hanlp.corpus.tag.Nature;
 import org.xm.xmnlp.hanlp.dictionary.CoreDictionaryTransformMatrixDictionary;
-import sun.security.provider.certpath.Vertex;
+import org.xm.xmnlp.hanlp.dictionary.CustomDictionary;
+import org.xm.xmnlp.hanlp.recognition.OrganizationRecognition;
+import org.xm.xmnlp.hanlp.recognition.PersonRecognition;
+import org.xm.xmnlp.hanlp.seg.common.Vertex;
 
 import java.util.Map;
 import java.util.TreeMap;

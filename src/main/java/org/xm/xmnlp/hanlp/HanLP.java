@@ -3,6 +3,8 @@ package org.xm.xmnlp.hanlp;
 import org.xm.xmnlp.hanlp.corpus.io.IIOAdapter;
 import org.xm.xmnlp.hanlp.seg.Segment;
 import org.xm.xmnlp.hanlp.seg.Viterbi.ViterbiSegment;
+import org.xm.xmnlp.hanlp.seg.common.Term;
+import org.xm.xmnlp.hanlp.tokenizer.StandardTokenizer;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -13,6 +15,13 @@ import static org.xm.xmnlp.hanlp.utility.Predefine.logger;
  * @author xuming
  */
 public class HanLP {
+    public static List<Term> segment(String text){
+        return StandardTokenizer.segment(text.toCharArray());
+    }
+    public static Segment newSegment(){
+        return new ViterbiSegment();
+    }
+
     public static final class Config{
         public static boolean ShowTermNature = true;
         public static boolean Normalization= false;
@@ -142,10 +151,11 @@ public class HanLP {
                 logger.setLevel(Level.OFF);
             }
         }
-        public static Segment newSegment(){
-            return new ViterbiSegment();
-        }
-//        public static String converToSimplifiedChinese(String trandtionalChineseString){
+
+    }
+
+    private HanLP(){}
+    //        public static String converToSimplifiedChinese(String trandtionalChineseString){
 //            return TraditioinalChineseDictionary.convertToSimplifiedChinese(trandtionalChineseString.toCharArray());
 //        }
 //        public static String converToTraditionalChinese(String simplifiedChineseString){
@@ -171,8 +181,5 @@ public class HanLP {
 //        public static String getSummary(String document,int maxLength){
 //            return TextRankSentence.getSummary(document,maxLength);
 //        }
-
-
-    }
 
 }

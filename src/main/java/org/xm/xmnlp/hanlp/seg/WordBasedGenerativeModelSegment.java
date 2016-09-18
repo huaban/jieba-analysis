@@ -5,14 +5,13 @@ import org.xm.xmnlp.hanlp.collection.trie.DoubleArrayTrie;
 import org.xm.xmnlp.hanlp.corpus.tag.Nature;
 import org.xm.xmnlp.hanlp.dictionary.CoreDictionary;
 import org.xm.xmnlp.hanlp.dictionary.CoreDictionaryTransformMatrixDictionary;
+import org.xm.xmnlp.hanlp.seg.common.Graph;
 import org.xm.xmnlp.hanlp.seg.common.Term;
 import org.xm.xmnlp.hanlp.seg.common.Vertex;
 import org.xm.xmnlp.hanlp.seg.common.WordNet;
 import org.xm.xmnlp.hanlp.utility.TextUtility;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * @author xuming
@@ -22,7 +21,7 @@ public abstract class WordBasedGenerativeModelSegment extends Segment {
         super();
     }
 
-    protected static void GenerateWord(List<Vertex> linkedArray, WordNet wordNetOptimum) {
+    protected  static void GenerateWord(List<Vertex> linkedArray, WordNet wordNetOptimum) {
         fixResultByRule(linkedArray);
         wordNetOptimum.addAll(linkedArray);
     }
@@ -84,7 +83,7 @@ public abstract class WordBasedGenerativeModelSegment extends Segment {
         Vertex current = next;
         while (listIterator.hasNext()) {
             next = listIterator.next();
-//            System.out.println("current:" + current + " next:" + next);
+            System.out.println("current:" + current + " next:" + next);
             Nature currentNature = current.getNature();
             if (currentNature == Nature.nx && (next.hasNature(Nature.q) || next.hasNature(Nature.n))) {
                 String[] param = current.realWord.split("-", 1);
@@ -169,20 +168,20 @@ public abstract class WordBasedGenerativeModelSegment extends Segment {
         }
     }
 
-    protected void GenerateWordNet(final WordNet wordNetStorage) {
-        final char[] charArray = wordNetStorage.charArray;
+    protected void GenerateWordNet(final WordNet wordNetAll) {
+        final char[] charArray = wordNetAll.charArray;
         DoubleArrayTrie<CoreDictionary.Attribute>.Searcher searcher = CoreDictionary.trie.getSearcher(charArray, 0);
         while (searcher.next()) {
-            wordNetStorage.add(searcher.begin + 1, new Vertex(new String(charArray, searcher.begin, searcher.length), searcher.value, searcher.index));
+            wordNetAll.add(searcher.begin + 1, new Vertex(new String(charArray, searcher.begin, searcher.length), searcher.value, searcher.index));
         }
-        LinkedList<Vertex>[] vertexes = wordNetStorage.getVertexes();
+        LinkedList<Vertex>[] vertexes = wordNetAll.getVertexes();
         for (int i = 1; i < vertexes.length; ) {
             if (vertexes[i].isEmpty()) {
                 int j = i + 1;
                 for (; j < vertexes.length - 1; ++j) {
                     if (!vertexes[j].isEmpty()) break;
                 }
-                wordNetStorage.add(i, quickAtomSegment(charArray, i - 1, j - 1));
+                wordNetAll.add(i, quickAtomSegment(charArray, i - 1, j - 1));
                 i = j;
             } else {
                 i += vertexes[i].getLast().realWord.length();
@@ -232,5 +231,36 @@ public abstract class WordBasedGenerativeModelSegment extends Segment {
         }
 
         return termList;
+    }
+    protected static List<Term> convert(List<Vertex> vertexList,boolean offsetEnabled){
+        assert vertexList!=null;
+        assert vertexList.size()>=2:"这条路径不应当短于2" + vertexList.toString();
+        int length =vertexList.size() -2;
+        List<Term> resultList = new ArrayList<>(length);
+        Iterator<Vertex> iterator = vertexList.iterator();
+        iterator.next();
+        if(offsetEnabled){
+            int offset = 0;
+            for(int i =0;i<length;++i){
+                Vertex vertex = iterator.next();
+                Term term = convert(vertex);
+                term.offset = offset;
+                offset+=term.length();
+                resultList.add(term);
+            }
+        }else {
+            for(int i =0;i< length;++i){
+                Vertex vertex = iterator.next();
+                Term term = convert(vertex);
+                resultList.add(term);
+            }
+        }
+        return resultList;
+    }
+    protected static List<Term> convert(List<Vertex> vertexList){
+        return convert(vertexList,false);
+    }
+    protected static Graph GenerateBiGraph (WordNet wordNet){
+        return wordNet.toGraph();
     }
 }

@@ -13,7 +13,6 @@ public class CoreDictionaryTransformMatrixDictionary {
 
     static {
         transformMatrixDictionary = new TransformMatrixDictionary<Nature>(Nature.class);
-        long start = System.currentTimeMillis();
         if (!transformMatrixDictionary.load(HanLP.Config.CoreDictionaryTransformMatrixDictionaryPath)) {
             System.err.println("load dict:" + HanLP.Config.CoreDictionaryTransformMatrixDictionaryPath);
             System.exit(-1);

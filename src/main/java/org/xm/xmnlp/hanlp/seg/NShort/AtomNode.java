@@ -1,8 +1,9 @@
 package org.xm.xmnlp.hanlp.seg.NShort;
 
 import org.xm.xmnlp.hanlp.corpus.tag.Nature;
+import org.xm.xmnlp.hanlp.dictionary.CoreDictionary;
+import org.xm.xmnlp.hanlp.seg.common.Vertex;
 import org.xm.xmnlp.hanlp.utility.Predefine;
-import sun.security.provider.certpath.Vertex;
 
 /**
  * @author xuming

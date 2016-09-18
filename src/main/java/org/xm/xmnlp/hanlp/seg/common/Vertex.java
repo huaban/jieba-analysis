@@ -41,13 +41,20 @@ public class Vertex {
         this.attribute = attribute;
         if (word == null) {
             word = compileRealWord(realWord, attribute);
-            assert realWord.length() > 0 : "构造空白节点会导致死循环！";
-            this.word = word;
-            this.realWord = realWord;
         }
+        assert realWord.length() > 0 : "构造空白节点会导致死循环！";
+        this.word = word;
+        this.realWord = realWord;
+
     }
 
+    /**
+     * 始##始
+     */
     public static Vertex B = new Vertex(Predefine.TAG_BIGIN, " ", new CoreDictionary.Attribute(Nature.begin, Predefine.MAX_FREQUENCY / 10), CoreDictionary.getWordID(Predefine.TAG_BIGIN));
+    /**
+     * 末##末
+     */
     public static Vertex E = new Vertex(Predefine.TAG_END, " ", new CoreDictionary.Attribute(Nature.begin, Predefine.MAX_FREQUENCY / 10), CoreDictionary.getWordID(Predefine.TAG_END));
 
     /**

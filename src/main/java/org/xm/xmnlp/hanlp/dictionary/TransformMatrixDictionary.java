@@ -109,7 +109,7 @@ public class TransformMatrixDictionary<E extends Enum<E>> {
         return Enum.valueOf(enumType, label);
     }
 
-    public void entendSize() {
+    public void extendSize() {
         ++ordinaryMax;
         double[][] n_transition_probability = new double[ordinaryMax][ordinaryMax];
         for (int i = 0; i < transition_probability.length; i++) {

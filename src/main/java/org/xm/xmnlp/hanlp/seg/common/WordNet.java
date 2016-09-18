@@ -23,8 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import static org.xm.xmnlp.hanlp.utility.Predefine.logger;
-
 
 /**
  * @author hankcs
@@ -65,7 +63,7 @@ public class WordNet {
         this.charArray = charArray;
         vertexes = new LinkedList[charArray.length + 2];
         for (int i = 0; i < vertexes.length; ++i) {
-            vertexes[i] = new LinkedList<Vertex>();
+            vertexes[i] = new LinkedList<>();
         }
         vertexes[0].add(Vertex.newB());
         vertexes[vertexes.length - 1].add(Vertex.newE());
