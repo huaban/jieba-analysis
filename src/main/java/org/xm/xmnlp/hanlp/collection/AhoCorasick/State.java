@@ -19,8 +19,7 @@ import java.util.*;
  *
  * @author Robert Bor
  */
-public class State
-{
+public class State {
 
     /**
      * 模式串的长度，也是这个状态的深度
@@ -49,37 +48,35 @@ public class State
     /**
      * 构造深度为0的节点
      */
-    public State()
-    {
+    public State() {
         this(0);
     }
 
     /**
      * 构造深度为depth的节点
+     *
      * @param depth
      */
-    public State(int depth)
-    {
+    public State(int depth) {
         this.depth = depth;
     }
 
     /**
      * 获取节点深度
+     *
      * @return
      */
-    public int getDepth()
-    {
+    public int getDepth() {
         return this.depth;
     }
 
     /**
      * 添加一个匹配到的模式串（这个状态对应着这个模式串)
+     *
      * @param keyword
      */
-    public void addEmit(int keyword)
-    {
-        if (this.emits == null)
-        {
+    public void addEmit(int keyword) {
+        if (this.emits == null) {
             this.emits = new TreeSet<Integer>(Collections.reverseOrder());
         }
         this.emits.add(keyword);
@@ -87,10 +84,10 @@ public class State
 
     /**
      * 获取最大的值
+     *
      * @return
      */
-    public Integer getLargestValueId()
-    {
+    public Integer getLargestValueId() {
         if (emits == null || emits.size() == 0) return null;
 
         return emits.iterator().next();
@@ -98,64 +95,62 @@ public class State
 
     /**
      * 添加一些匹配到的模式串
+     *
      * @param emits
      */
-    public void addEmit(Collection<Integer> emits)
-    {
-        for (int emit : emits)
-        {
+    public void addEmit(Collection<Integer> emits) {
+        for (int emit : emits) {
             addEmit(emit);
         }
     }
 
     /**
      * 获取这个节点代表的模式串（们）
+     *
      * @return
      */
-    public Collection<Integer> emit()
-    {
+    public Collection<Integer> emit() {
         return this.emits == null ? Collections.<Integer>emptyList() : this.emits;
     }
 
     /**
      * 是否是终止状态
+     *
      * @return
      */
-    public boolean isAcceptable()
-    {
+    public boolean isAcceptable() {
         return this.depth > 0 && this.emits != null;
     }
 
     /**
      * 获取failure状态
+     *
      * @return
      */
-    public State failure()
-    {
+    public State failure() {
         return this.failure;
     }
 
     /**
      * 设置failure状态
+     *
      * @param failState
      */
-    public void setFailure(State failState, int fail[])
-    {
+    public void setFailure(State failState, int fail[]) {
         this.failure = failState;
         fail[index] = failState.index;
     }
 
     /**
      * 转移到下一个状态
-     * @param character 希望按此字符转移
+     *
+     * @param character       希望按此字符转移
      * @param ignoreRootState 是否忽略根节点，如果是根节点自己调用则应该是true，否则为false
      * @return 转移结果
      */
-    private State nextState(Character character, boolean ignoreRootState)
-    {
+    private State nextState(Character character, boolean ignoreRootState) {
         State nextState = this.success.get(character);
-        if (!ignoreRootState && nextState == null && this.depth == 0)
-        {
+        if (!ignoreRootState && nextState == null && this.depth == 0) {
             nextState = this;
         }
         return nextState;
@@ -163,48 +158,43 @@ public class State
 
     /**
      * 按照character转移，根节点转移失败会返回自己（永远不会返回null）
+     *
      * @param character
      * @return
      */
-    public State nextState(Character character)
-    {
+    public State nextState(Character character) {
         return nextState(character, false);
     }
 
     /**
      * 按照character转移，任何节点转移失败会返回null
+     *
      * @param character
      * @return
      */
-    public State nextStateIgnoreRootState(Character character)
-    {
+    public State nextStateIgnoreRootState(Character character) {
         return nextState(character, true);
     }
 
-    public State addState(Character character)
-    {
+    public State addState(Character character) {
         State nextState = nextStateIgnoreRootState(character);
-        if (nextState == null)
-        {
+        if (nextState == null) {
             nextState = new State(this.depth + 1);
             this.success.put(character, nextState);
         }
         return nextState;
     }
 
-    public Collection<State> getStates()
-    {
+    public Collection<State> getStates() {
         return this.success.values();
     }
 
-    public Collection<Character> getTransitions()
-    {
+    public Collection<Character> getTransitions() {
         return this.success.keySet();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder("State{");
         sb.append("depth=").append(depth);
         sb.append(", ID=").append(index);
@@ -218,20 +208,18 @@ public class State
 
     /**
      * 获取goto表
+     *
      * @return
      */
-    public Map<Character, State> getSuccess()
-    {
+    public Map<Character, State> getSuccess() {
         return success;
     }
 
-    public int getIndex()
-    {
+    public int getIndex() {
         return index;
     }
 
-    public void setIndex(int index)
-    {
+    public void setIndex(int index) {
         this.index = index;
     }
 }

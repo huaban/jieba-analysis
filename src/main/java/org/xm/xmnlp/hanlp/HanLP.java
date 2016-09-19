@@ -1,6 +1,8 @@
 package org.xm.xmnlp.hanlp;
 
 import org.xm.xmnlp.hanlp.corpus.io.IIOAdapter;
+import org.xm.xmnlp.hanlp.dictionary.py.Pinyin;
+import org.xm.xmnlp.hanlp.dictionary.py.PinyinDictionary;
 import org.xm.xmnlp.hanlp.seg.Segment;
 import org.xm.xmnlp.hanlp.seg.Viterbi.ViterbiSegment;
 import org.xm.xmnlp.hanlp.seg.common.Term;
@@ -15,16 +17,17 @@ import static org.xm.xmnlp.hanlp.utility.Predefine.logger;
  * @author xuming
  */
 public class HanLP {
-    public static List<Term> segment(String text){
+    public static List<Term> segment(String text) {
         return StandardTokenizer.segment(text.toCharArray());
     }
-    public static Segment newSegment(){
+
+    public static Segment newSegment() {
         return new ViterbiSegment();
     }
 
-    public static final class Config{
+    public static final class Config {
         public static boolean ShowTermNature = true;
-        public static boolean Normalization= false;
+        public static boolean Normalization = false;
         public static IIOAdapter IOAdapter;
         /**
          * 开发模式
@@ -140,30 +143,59 @@ public class HanLP {
         public static String CRFDependencyModelPath = "data/model/dependency/CRFDependencyModelMini.txt";
 
 
-        public static void enableDebug(){
+        public static void enableDebug() {
             enableDebug(true);
         }
-        public static void enableDebug(boolean enable){
+
+        public static void enableDebug(boolean enable) {
             DEBUG = enable;
-            if(DEBUG){
+            if (DEBUG) {
                 logger.setLevel(Level.ALL);
-            }else {
+            } else {
                 logger.setLevel(Level.OFF);
             }
         }
 
     }
 
-    private HanLP(){}
+    private HanLP() {
+    }
+
     //        public static String converToSimplifiedChinese(String trandtionalChineseString){
 //            return TraditioinalChineseDictionary.convertToSimplifiedChinese(trandtionalChineseString.toCharArray());
 //        }
 //        public static String converToTraditionalChinese(String simplifiedChineseString){
 //            return SimplifiedChineseDictionary.convertToTraditionalChinese(simplifiedChineseString);
 //        }
-//        public static List<Pinyin> convertToPinyinList(String text){
-//            return PinyinDictionary.convertToPinyin(text);
-//        }
+    public static List<Pinyin> convertToPinyinList(String text) {
+        return PinyinDictionary.convertToPinyin(text);
+    }
+
+    /**
+     * 转化为拼音
+     *
+     * @param text       文本
+     * @param separator  分隔符
+     * @param remainNone 有些字没有拼音（如标点），是否保留它们的拼音（true用none表示，false用原字符表示）
+     * @return 一个字符串，由[拼音][分隔符][拼音]构成
+     */
+    public static String convertToPinyinString(String text, String separator, boolean remainNone) {
+        List<Pinyin> pinyinList = PinyinDictionary.convertToPinyin(text, true);
+        int length = pinyinList.size();
+        StringBuilder sb = new StringBuilder(length * (5 + separator.length()));
+        int i = 1;
+        for (Pinyin pinyin : pinyinList) {
+
+            if (pinyin == Pinyin.none5 && !remainNone) {
+                sb.append(text.charAt(i - 1));
+            } else sb.append(pinyin.getPinyinWithoutTone());
+            if (i < length) {
+                sb.append(separator);
+            }
+            ++i;
+        }
+        return sb.toString();
+    }
 //
 //        public static CoNLLSentence parseDependency(String sentence){
 //            return NeuralNetworkDependencyParse.compute(sentence);

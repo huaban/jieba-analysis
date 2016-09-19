@@ -7,6 +7,7 @@ import org.xm.xmnlp.hanlp.corpus.tag.NT;
 import org.xm.xmnlp.hanlp.dictionary.CoreDictionary;
 import org.xm.xmnlp.hanlp.dictionary.TransformMatrixDictionary;
 import org.xm.xmnlp.hanlp.dictionary.item.EnumItem;
+import org.xm.xmnlp.hanlp.seg.common.Vertex;
 import org.xm.xmnlp.hanlp.seg.common.WordNet;
 import org.xm.xmnlp.hanlp.utility.Predefine;
 
@@ -3722,7 +3723,6 @@ public class OrganizationDictionary {
      * @param wordNetAll
      */
     public static void parsePattern(List<NT> ntList, List<Vertex> vertexList, WordNet wordNetOptimum, WordNet wordNetAll) {
-//        ListIterator<Vertex> listIterator = vertexList.listIterator();
         StringBuilder sbPattern = new StringBuilder(ntList.size());
         for (NT nt : ntList) {
             sbPattern.append(nt.toString());
