@@ -2,6 +2,7 @@ package org.xm.xmnlp.hanlp.seg.Viterbi;
 
 import org.xm.xmnlp.hanlp.HanLP;
 import org.xm.xmnlp.hanlp.recognition.OrganizationRecognition;
+import org.xm.xmnlp.hanlp.recognition.PersonRecognition;
 import org.xm.xmnlp.hanlp.seg.WordBasedGenerativeModelSegment;
 import org.xm.xmnlp.hanlp.seg.common.Term;
 import org.xm.xmnlp.hanlp.seg.common.Vertex;
@@ -36,10 +37,10 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment {
         if (config.ner) {
             WordNet wordNetOptimum = new WordNet(sentence, vertexList);
             int preSize = wordNetOptimum.size();
-            /*if (config.nameRecognize) {
+            if (config.nameRecognize) {
                 PersonRecognition.recognition(vertexList, wordNetOptimum, wordNetAll);
             }
-            if (config.translatedNameRecognize) {
+            /*if (config.translatedNameRecognize) {
                 TransformMatrixDictionary.recognition(vertexList, wordNetOptimum, wordNetAll);
             }
             if (config.japaneseNameRecognize) {

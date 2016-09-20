@@ -11,7 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author xuming
+ * 节点，统一Trie树根和其他节点的基类
+ *
+ * @param <V> 值
+ * @author He Han
  */
 public abstract class BaseNode<V> implements Comparable<BaseNode> {
     /**
