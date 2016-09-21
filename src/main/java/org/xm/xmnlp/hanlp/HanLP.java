@@ -26,9 +26,6 @@ public class HanLP {
     }
 
     public static final class Config {
-        public static boolean ShowTermNature = true;
-        public static boolean Normalization = false;
-        public static IIOAdapter IOAdapter;
         /**
          * 开发模式
          */
@@ -71,11 +68,11 @@ public class HanLP {
          */
         public static String PlaceDictionaryPath = "data/dictionary/place/ns.txt";
         /**
-         * 地名词典转移矩阵路径
+         * 机构名词典转移矩阵路径
          */
         public static String PlaceDictionaryTrPath = "data/dictionary/place/ns.tr.txt";
         /**
-         * 地名词典路径
+         * 机构名词典路径
          */
         public static String OrganizationDictionaryPath = "data/dictionary/organization/nt.txt";
         /**
@@ -83,9 +80,9 @@ public class HanLP {
          */
         public static String OrganizationDictionaryTrPath = "data/dictionary/organization/nt.tr.txt";
         /**
-         * 繁简词典路径
+         * 简繁转换词典根目录
          */
-        public static String TraditionalChineseDictionaryPath = "data/dictionary/tc/TraditionalChinese.txt";
+        public static String tcDictionaryRoot = "data/dictionary/tc/";
         /**
          * 声母韵母语调词典
          */
@@ -114,7 +111,7 @@ public class HanLP {
         /**
          * 字符正规化表（全角转半角，繁体转简体）
          */
-        public static String CharTablePath = "data/dictionary/other/CharTable.bin.yes";
+        public static String CharTablePath = "data/dictionary/other/CharTable.txt";
 
         /**
          * 词-词性-依存关系模型
@@ -141,7 +138,19 @@ public class HanLP {
          * CRF依存模型
          */
         public static String CRFDependencyModelPath = "data/model/dependency/CRFDependencyModelMini.txt";
-
+        /**
+         * 分词结果是否展示词性
+         */
+        public static boolean ShowTermNature = true;
+        /**
+         * 是否执行字符正规化（繁体->简体，全角->半角，大写->小写），切换配置后必须删CustomDictionary.txt.bin缓存
+         */
+        public static boolean Normalization = false;
+        /**
+         * IO适配器（默认null，表示从本地文件系统读取），实现com.hankcs.hanlp.corpus.io.IIOAdapter接口
+         * 以在不同的平台（Hadoop、Redis等）上运行HanLP
+         */
+        public static IIOAdapter IOAdapter;
 
         public static void enableDebug() {
             enableDebug(true);

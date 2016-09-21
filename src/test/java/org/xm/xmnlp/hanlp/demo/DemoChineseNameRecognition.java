@@ -20,12 +20,11 @@ import java.util.List;
 
 /**
  * 中国人名识别
+ *
  * @author hankcs
  */
-public class DemoChineseNameRecognition
-{
-    public static void main(String[] args)
-    {
+public class DemoChineseNameRecognition {
+    public static void main(String[] args) {
         String[] testCase = new String[]{
                 "签约仪式前，秦光荣、李纪恒、仇和等一同会见",
                 "区长庄木弟新年致辞",
@@ -41,8 +40,7 @@ public class DemoChineseNameRecognition
                 "龚学平等领导说,邓颖超生前杜绝超生",
         };
         Segment segment = HanLP.newSegment().enableNameRecognize(true);
-        for (String sentence : testCase)
-        {
+        for (String sentence : testCase) {
             List<Term> termList = segment.seg(sentence);
             System.out.println(termList);
         }

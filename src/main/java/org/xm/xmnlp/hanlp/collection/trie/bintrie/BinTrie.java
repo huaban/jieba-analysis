@@ -1,4 +1,16 @@
+/*
+ * <summary></summary>
+ * <author>He Han</author>
+ * <email>hankcs.cn@gmail.com</email>
+ * <create-date>2014/5/3 11:34</create-date>
+ *
+ * <copyright file="BinTrie.java" company="上海林原信息科技有限公司">
+ * Copyright (c) 2003-2014, 上海林原信息科技有限公司. All Right Reserved, http://www.linrunsoft.com/
+ * This source is subject to the LinrunSpace License. Please contact 上海林原信息科技有限公司 to get more information.
+ * </copyright>
+ */
 package org.xm.xmnlp.hanlp.collection.trie.bintrie;
+
 
 import org.xm.xmnlp.hanlp.collection.trie.ITrie;
 import org.xm.xmnlp.hanlp.corpus.io.ByteArray;
@@ -11,7 +23,9 @@ import java.util.*;
 import static org.xm.xmnlp.hanlp.utility.Predefine.logger;
 
 /**
- * @author xuming
+ * 首字直接分配内存，之后二分动态数组的Trie树，能够平衡时间和空间
+ *
+ * @author hankcs
  */
 public class BinTrie<V> extends BaseNode<V> implements ITrie<V>, Externalizable {
     private int size;
@@ -296,12 +310,14 @@ public class BinTrie<V> extends BaseNode<V> implements ITrie<V>, Externalizable 
         return 0;
     }
 
+
     /**
      * 保存到二进制输出流
      *
      * @param out
      * @return
      */
+    @Override
     public boolean save(DataOutputStream out) {
         try {
             for (BaseNode node : child) {
@@ -330,7 +346,7 @@ public class BinTrie<V> extends BaseNode<V> implements ITrie<V>, Externalizable 
     public boolean load(String path, V[] value) {
         byte[] bytes = IOUtil.readBytes(path);
         if (bytes == null) return false;
-        ValueArray valueArray = new ValueArray(value);
+        _ValueArray valueArray = new _ValueArray(value);
         ByteArray byteArray = new ByteArray(bytes);
         for (int i = 0; i < child.length; ++i) {
             int flag = byteArray.nextInt();
@@ -353,7 +369,7 @@ public class BinTrie<V> extends BaseNode<V> implements ITrie<V>, Externalizable 
     public boolean load(String path) {
         byte[] bytes = IOUtil.readBytes(path);
         if (bytes == null) return false;
-        ValueArray valueArray = new EmptyValueArray();
+        _ValueArray valueArray = new _EmptyValueArray();
         ByteArray byteArray = new ByteArray(bytes);
         for (int i = 0; i < child.length; ++i) {
             int flag = byteArray.nextInt();
@@ -367,7 +383,7 @@ public class BinTrie<V> extends BaseNode<V> implements ITrie<V>, Externalizable 
         return true;
     }
 
-    public boolean load(ByteArray byteArray, ValueArray valueArray) {
+    public boolean load(ByteArray byteArray, _ValueArray valueArray) {
         for (int i = 0; i < child.length; ++i) {
             int flag = byteArray.nextInt();
             if (flag == 1) {
@@ -384,8 +400,8 @@ public class BinTrie<V> extends BaseNode<V> implements ITrie<V>, Externalizable 
         return load(byteArray, newValueArray().setValue(value));
     }
 
-    public ValueArray newValueArray() {
-        return new ValueArray();
+    public _ValueArray newValueArray() {
+        return new _ValueArray();
     }
 
     @Override

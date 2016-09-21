@@ -12,7 +12,7 @@
 package org.xm.xmnlp.hanlp.collection.trie.bintrie;
 
 
-import java.util.Arrays;
+import org.xm.xmnlp.hanlp.collection.trie.bintrie.util.ArrayTool;
 
 /**
  * 深度大于等于2的子节点
@@ -26,7 +26,7 @@ public class Node<V> extends BaseNode {
         if (child == null) {
             child = new BaseNode[0];
         }
-        int index = Arrays.binarySearch(child, node);
+        int index = ArrayTool.binarySearch(child, node);
         if (index >= 0) {
             BaseNode target = child[index];
             switch (node.status) {
@@ -81,7 +81,7 @@ public class Node<V> extends BaseNode {
     @Override
     public BaseNode getChild(char c) {
         if (child == null) return null;
-        int index = Arrays.binarySearch(child, c);
+        int index = ArrayTool.binarySearch(child, c);
         if (index < 0) return null;
 
         return child[index];

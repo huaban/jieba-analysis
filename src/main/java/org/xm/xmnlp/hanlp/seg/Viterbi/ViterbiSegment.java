@@ -1,8 +1,11 @@
 package org.xm.xmnlp.hanlp.seg.Viterbi;
 
 import org.xm.xmnlp.hanlp.HanLP;
-import org.xm.xmnlp.hanlp.recognition.OrganizationRecognition;
-import org.xm.xmnlp.hanlp.recognition.PersonRecognition;
+import org.xm.xmnlp.hanlp.recognition.nr.JapanesePersonRecognition;
+import org.xm.xmnlp.hanlp.recognition.nr.PersonRecognition;
+import org.xm.xmnlp.hanlp.recognition.nr.TranslatedPersonRecognition;
+import org.xm.xmnlp.hanlp.recognition.ns.PlaceRecognition;
+import org.xm.xmnlp.hanlp.recognition.nt.OrganizationRecognition;
 import org.xm.xmnlp.hanlp.seg.WordBasedGenerativeModelSegment;
 import org.xm.xmnlp.hanlp.seg.common.Term;
 import org.xm.xmnlp.hanlp.seg.common.Vertex;
@@ -20,7 +23,7 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment {
     @Override
     protected List<Term> segSentence(char[] sentence) {
         WordNet wordNetAll = new WordNet(sentence);
-        GenerateWordNet(wordNetAll);
+         GenerateWordNet(wordNetAll);
         if (HanLP.Config.DEBUG) {
             System.out.printf("粗分词网：\n%s\n", wordNetAll);
         }
@@ -40,15 +43,15 @@ public class ViterbiSegment extends WordBasedGenerativeModelSegment {
             if (config.nameRecognize) {
                 PersonRecognition.recognition(vertexList, wordNetOptimum, wordNetAll);
             }
-            /*if (config.translatedNameRecognize) {
-                TransformMatrixDictionary.recognition(vertexList, wordNetOptimum, wordNetAll);
+            if (config.translatedNameRecognize) {
+                TranslatedPersonRecognition.recognition(vertexList, wordNetOptimum, wordNetAll);
             }
             if (config.japaneseNameRecognize) {
                 JapanesePersonRecognition.recognition(vertexList, wordNetOptimum, wordNetAll);
             }
             if (config.placeRecognize) {
                 PlaceRecognition.recognition(vertexList, wordNetOptimum, wordNetAll);
-            }*/
+            }
             if (config.organizationRecognize) {
                 // 层叠隐马模型——生成输出作为下一级隐马输入
                 vertexList = viterbi(wordNetOptimum);

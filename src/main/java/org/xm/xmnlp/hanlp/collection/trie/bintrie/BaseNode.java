@@ -1,4 +1,16 @@
+/*
+ * <summary></summary>
+ * <author>He Han</author>
+ * <email>hankcs.cn@gmail.com</email>
+ * <create-date>2014/5/2 20:22</create-date>
+ *
+ * <copyright file="INode.java" company="上海林原信息科技有限公司">
+ * Copyright (c) 2003-2014, 上海林原信息科技有限公司. All Right Reserved, http://www.linrunsoft.com/
+ * This source is subject to the LinrunSpace License. Please contact 上海林原信息科技有限公司 to get more information.
+ * </copyright>
+ */
 package org.xm.xmnlp.hanlp.collection.trie.bintrie;
+
 
 import org.xm.xmnlp.hanlp.corpus.io.ByteArray;
 
@@ -163,7 +175,7 @@ public abstract class BaseNode<V> implements Comparable<BaseNode> {
         }
     }
 
-    protected void walkToLoad(ByteArray byteArray, ValueArray<V> valueArray) {
+    protected void walkToLoad(ByteArray byteArray, _ValueArray<V> valueArray) {
         c = byteArray.nextChar();
         status = ARRAY_STATUS[byteArray.nextInt()];
         if (status == Status.WORD_END_3 || status == Status.WORD_MIDDLE_2) {

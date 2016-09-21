@@ -1,6 +1,7 @@
 package org.xm.xmnlp.hanlp.dictionary;
 
 import org.xm.xmnlp.hanlp.HanLP;
+import org.xm.xmnlp.hanlp.collection.AhoCorasick.AhoCorasickDoubleArrayTrie;
 import org.xm.xmnlp.hanlp.collection.trie.DoubleArrayTrie;
 import org.xm.xmnlp.hanlp.collection.trie.bintrie.BinTrie;
 import org.xm.xmnlp.hanlp.corpus.io.ByteArray;
@@ -215,6 +216,10 @@ public class CustomDictionary {
     public static BaseSearcher getSearcher(String text) {
         return new Searcher(text);
     }
+    public static BaseSearcher getSearcher(char[] charArray)
+    {
+        return new Searcher(charArray);
+    }
 
     @Override
     public String toString() {
@@ -267,19 +272,19 @@ public class CustomDictionary {
      * @param text      文本
      * @param processor 处理器
      */
-//    public static void parseText(char[] text, AhoCorasickDoubleArrayTrie.IHit<CoreDictionary.Attribute> processor) {
-//        if (trie != null) {
-//            BaseSearcher searcher = CustomDictionary.getSearcher(text);
-//            int offset;
-//            Map.Entry<String, CoreDictionary.Attribute> entry;
-//            while ((entry = searcher.next()) != null) {
-//                offset = searcher.getOffset();
-//                processor.hit(offset, offset + entry.getKey().length(), entry.getValue());
-//            }
-//        }
-//        DoubleArrayTrie<CoreDictionary.Attribute>.Searcher searcher = dat.getSearcher(text, 0);
-//        while (searcher.next()) {
-//            processor.hit(searcher.begin, searcher.begin + searcher.length, searcher.value);
-//        }
-//    }
+    public static void parseText(char[] text, AhoCorasickDoubleArrayTrie.IHit<CoreDictionary.Attribute> processor) {
+        if (trie != null) {
+            BaseSearcher searcher = CustomDictionary.getSearcher(text);
+            int offset;
+            Map.Entry<String, CoreDictionary.Attribute> entry;
+            while ((entry = searcher.next()) != null) {
+                offset = searcher.getOffset();
+                processor.hit(offset, offset + entry.getKey().length(), entry.getValue());
+            }
+        }
+        DoubleArrayTrie<CoreDictionary.Attribute>.Searcher searcher = dat.getSearcher(text, 0);
+        while (searcher.next()) {
+            processor.hit(searcher.begin, searcher.begin + searcher.length, searcher.value);
+        }
+    }
 }

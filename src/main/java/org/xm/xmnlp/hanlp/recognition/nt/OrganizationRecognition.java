@@ -1,4 +1,4 @@
-package org.xm.xmnlp.hanlp.recognition;
+package org.xm.xmnlp.hanlp.recognition.nt;
 
 import org.xm.xmnlp.hanlp.HanLP;
 import org.xm.xmnlp.hanlp.algorithm.Viterbi;

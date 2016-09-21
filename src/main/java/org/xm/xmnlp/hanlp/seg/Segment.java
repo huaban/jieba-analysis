@@ -207,12 +207,16 @@ public abstract class Segment {
                 int from = i * per;
                 threadArray[i] = new WorkThread(sentenceArray, termListArray, from, from + per);
                 threadArray[i].start();
+//                System.out.println("0:"+i);
             }
             threadArray[config.threadNumber - 1] = new WorkThread(sentenceArray, termListArray, (config.threadNumber - 1) * per, sentenceArray.length);
             threadArray[config.threadNumber - 1].start();
+//            System.out.println("1:"+(config.threadNumber - 1));
             try {
                 for (WorkThread thread : threadArray) {
                     thread.join();
+
+//                    System.out.println("2:");
                 }
             } catch (InterruptedException e) {
                 logger.severe("线程同步异常：" + TextUtility.exceptionToString(e));
@@ -242,7 +246,7 @@ public abstract class Segment {
 
     public List<Term> seg(char[] text) {
         assert text != null;
-        if (HanLP.Config.Normalization) {
+         if (HanLP.Config.Normalization) {
             CharTable.normalization(text);
         }
         return segSentence(text);
