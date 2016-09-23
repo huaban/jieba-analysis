@@ -5,7 +5,6 @@ import org.xm.xmnlp.hanlp.corpus.io.IOUtil;
 import org.xm.xmnlp.hanlp.utility.Predefine;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -123,6 +122,33 @@ public class CoreBiGramTableDictionary {
         return true;
     }
 
+    /**
+     * 二分搜索，由于二元接续前一个词固定时，后一个词比较少，所以二分也能取得很高的性能
+     *
+     * @param a         目标数组
+     * @param fromIndex 开始下标
+     * @param length    长度
+     * @param key       词的id
+     * @return 共现频次
+     */
+    private static int binarySearch(int[] a, int fromIndex, int length, int key) {
+        int low = fromIndex;
+        int high = fromIndex + length - 1;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            int midVal = a[mid << 1];
+
+            if (midVal < key)
+                low = mid + 1;
+            else if (midVal > key)
+                high = mid - 1;
+            else
+                return mid; // key found
+        }
+        return -(low + 1);  // key not found.
+    }
+
     public static int getBiFrequency(String a, String b) {
         int idA = CoreDictionary.trie.exactMatchSearch(a);
         if (idA == -1) {
@@ -132,7 +158,7 @@ public class CoreBiGramTableDictionary {
         if (idB == -1) {
             return 0;
         }
-        int index = Arrays.binarySearch(pair, start[idA], start[idA + 1], idB);
+        int index = binarySearch(pair, start[idA], start[idA + 1] - start[idA], idB);
         if (index < 0) return 0;
         index <<= 1;
         return pair[index + 1];
@@ -142,7 +168,7 @@ public class CoreBiGramTableDictionary {
         if (idA == -1 || idB == -1) {
             return 1000;
         }
-        int index = Arrays.binarySearch(pair, start[idA], start[idA + 1], idB);
+        int index = binarySearch(pair, start[idA], start[idA + 1] - start[idA], idB);
         if (index < 0) return 0;
         index <<= 1;
         return pair[index + 1];
