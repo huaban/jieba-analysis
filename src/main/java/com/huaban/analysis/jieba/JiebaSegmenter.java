@@ -80,14 +80,41 @@ public class JiebaSegmenter {
         return route;
     }
 
-    /**
-     *
-     * @param paragraph
-     * @param mode
-     * @param useHMM Whether to use the Hidden Markov Model
-     * @return
-     */
-    public List<SegToken> process(String paragraph, SegMode mode, Boolean useHMM) {
+    public List<SegToken> _process(List<String> tokenList, SegMode mode, int offset) {
+        List<SegToken> tokens = new ArrayList<SegToken>();
+
+        if (mode == SegMode.SEARCH) {
+            for (String token : tokenList) {
+                tokens.add(new SegToken(token, offset, offset += token.length()));
+            }
+        } else {
+            for (String token : tokenList) {
+                if (token.length() > 2) {
+                    String gram2;
+                    int j = 0;
+                    for (; j < token.length() - 1; ++j) {
+                        gram2 = token.substring(j, j + 2);
+                        if (wordDict.containsWord(gram2))
+                            tokens.add(new SegToken(gram2, offset + j, offset + j + 2));
+                    }
+                }
+                if (token.length() > 3) {
+                    String gram3;
+                    int j = 0;
+                    for (; j < token.length() - 2; ++j) {
+                        gram3 = token.substring(j, j + 3);
+                        if (wordDict.containsWord(gram3))
+                            tokens.add(new SegToken(gram3, offset + j, offset + j + 3));
+                    }
+                }
+                tokens.add(new SegToken(token, offset, offset += token.length()));
+            }
+        }
+
+        return tokens;
+    }
+
+    public List<SegToken> process(String paragraph, SegMode mode) {
         List<String> tokenList = new ArrayList<String>();
         List<SegToken> tokens = new ArrayList<SegToken>();
         StringBuilder sb = new StringBuilder();
@@ -98,36 +125,9 @@ public class JiebaSegmenter {
                 sb.append(ch);
             else {
                 if (sb.length() > 0) {
-                    tokenList = useHMM ? sentenceProcess(sb.toString()) : sentenceProcessWithNoHMM(sb.toString());
-                    // process
-                    if (mode == SegMode.SEARCH) {
-                        for ( String word : tokenList ) {
-                            tokens.add(new SegToken(word, offset, offset += word.length()));
-                        }
-                    }
-                    else {
-                        for ( String token : tokenList ) {
-                            if (token.length() > 2) {
-                                String gram2;
-                                int j = 0;
-                                for (; j < token.length() - 1; ++j) {
-                                    gram2 = token.substring(j, j + 2);
-                                    if (wordDict.containsWord(gram2))
-                                        tokens.add(new SegToken(gram2, offset + j, offset + j + 2));
-                                }
-                            }
-                            if (token.length() > 3) {
-                                String gram3;
-                                int j = 0;
-                                for (; j < token.length() - 2; ++j) {
-                                    gram3 = token.substring(j, j + 3);
-                                    if (wordDict.containsWord(gram3))
-                                        tokens.add(new SegToken(gram3, offset + j, offset + j + 3));
-                                }
-                            }
-                            tokens.add(new SegToken(token, offset, offset += token.length()));
-                        }
-                    }
+                    tokenList = sentenceProcess(sb.toString());
+                    tokens.addAll(_process(tokenList, mode, offset));
+
                     sb = new StringBuilder();
                     offset = i;
                 }
@@ -138,35 +138,45 @@ public class JiebaSegmenter {
             }
         }
         if (sb.length() > 0) {
-            tokenList = useHMM ? sentenceProcess(sb.toString()) : sentenceProcessWithNoHMM(sb.toString());
+            tokenList = sentenceProcess(sb.toString());
+            tokens.addAll(_process(tokenList, mode, offset));
+        }
 
-            if (mode == SegMode.SEARCH) {
-                for ( String token : tokenList ) {
-                    tokens.add(new SegToken(token, offset, offset += token.length()));
+        return tokens;
+    }
+
+
+    /**
+     *
+     * @param paragraph
+     * @param mode
+     * @return
+     */
+    public List<SegToken> processWithNoHMM(String paragraph, SegMode mode) {
+        List<String> tokenList = new ArrayList<String>();
+        List<SegToken> tokens = new ArrayList<SegToken>();
+        StringBuilder sb = new StringBuilder();
+        int offset = 0;
+        for (int i = 0; i < paragraph.length(); ++i) {
+            char ch = CharacterUtil.regularize(paragraph.charAt(i));
+            if (CharacterUtil.ccFind(ch))
+                sb.append(ch);
+            else {
+                if (sb.length() > 0) {
+                    tokenList = sentenceProcessWithNoHMM(sb.toString());
+                    tokens.addAll(_process(tokenList, mode, offset));
+                    sb = new StringBuilder();
+                    offset = i;
                 }
-            } else {
-                for ( String token : tokenList ) {
-                    if (token.length() > 2) {
-                        String gram2;
-                        int j = 0;
-                        for (; j < token.length() - 1; ++j) {
-                            gram2 = token.substring(j, j + 2);
-                            if (wordDict.containsWord(gram2))
-                                tokens.add(new SegToken(gram2, offset + j, offset + j + 2));
-                        }
-                    }
-                    if (token.length() > 3) {
-                        String gram3;
-                        int j = 0;
-                        for (; j < token.length() - 2; ++j) {
-                            gram3 = token.substring(j, j + 3);
-                            if (wordDict.containsWord(gram3))
-                                tokens.add(new SegToken(gram3, offset + j, offset + j + 3));
-                        }
-                    }
-                    tokens.add(new SegToken(token, offset, offset += token.length()));
-                }
+                if (wordDict.containsWord(paragraph.substring(i, i + 1)))
+                    tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset));
+                else
+                    tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset));
             }
+        }
+        if (sb.length() > 0) {
+            tokenList = sentenceProcessWithNoHMM(sb.toString());
+            tokens.addAll(_process(tokenList, mode, offset));
         }
 
         return tokens;

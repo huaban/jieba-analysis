@@ -132,7 +132,7 @@ public class JiebaSegmenterTest extends TestCase {
     @Test
     public void testCutForSearch() {
         for (String sentence : sentences) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH, true);
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
@@ -141,7 +141,7 @@ public class JiebaSegmenterTest extends TestCase {
     @Test
     public void testCutForIndex() {
         for (String sentence : sentences) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX, true);
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
@@ -151,7 +151,7 @@ public class JiebaSegmenterTest extends TestCase {
         WordDictionary wordDict = WordDictionary.getInstance();
         wordDict.resetDict();
         for (String sentence : sentences) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH, true);
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
@@ -162,7 +162,7 @@ public class JiebaSegmenterTest extends TestCase {
         WordDictionary wordDict = WordDictionary.getInstance();
         wordDict.resetDict();
         for (String sentence : sentences) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX, true);
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
@@ -173,7 +173,7 @@ public class JiebaSegmenterTest extends TestCase {
         WordDictionary wordDict = WordDictionary.getInstance();
         wordDict.resetDict();
         for (String sentence : sentences) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH, false);
+            List<SegToken> tokens = segmenter.processWithNoHMM(sentence, SegMode.SEARCH);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
@@ -184,7 +184,7 @@ public class JiebaSegmenterTest extends TestCase {
         WordDictionary wordDict = WordDictionary.getInstance();
         wordDict.resetDict();
         for (String sentence : sentences) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX, false);
+            List<SegToken> tokens = segmenter.processWithNoHMM(sentence, SegMode.INDEX);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
@@ -202,7 +202,7 @@ public class JiebaSegmenterTest extends TestCase {
                               "AT&T是一件不错的公司，给你发offer了吗？",
                               "干脆就把那部蒙人的闲法给废了拉倒！RT @laoshipukong : 27日，全国人大常委会第三次审议侵权责任法草案，删除了有关医疗损害责任“举证倒置”的规定。在医患纠纷中本已处于弱势地位的消费者由此将陷入万劫不复的境地。 " };
         for (String sentence : bugs) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH, true);
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
@@ -215,7 +215,7 @@ public class JiebaSegmenterTest extends TestCase {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 2000; ++i)
             for (String sentence : sentences) {
-                segmenter.process(sentence, SegMode.INDEX, true);
+                segmenter.process(sentence, SegMode.INDEX);
                 length += sentence.getBytes(StandardCharsets.UTF_8).length;
                 wordCount += sentence.length();
             }
@@ -232,7 +232,7 @@ public class JiebaSegmenterTest extends TestCase {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 100; ++i)
             for (String sentence : longSentences) {
-                segmenter.process(sentence, SegMode.INDEX, true);
+                segmenter.process(sentence, SegMode.INDEX);
                 length += sentence.getBytes(StandardCharsets.UTF_8).length;
                 wordCount += sentence.length();
             }
