@@ -177,6 +177,11 @@ public class WordDictionary {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
 
+                if (tokens.length < 1) {
+                    // Ignore empty line
+                    continue;
+                }
+
                 String word = tokens[0];
 
                 double freq = 3.0d;
