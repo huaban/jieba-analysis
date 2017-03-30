@@ -57,6 +57,17 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.3.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.16</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,5 +1,8 @@
 package com.huaban.analysis.jieba;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.nio.file.DirectoryStream;
@@ -30,6 +33,11 @@ public class WordDictionary {
     private DictSegment _dict;
 
 
+
+    private static Logger LOG = LoggerFactory.getLogger(WordDictionary.class);
+
+
+
     private WordDictionary() {
         this.loadDict();
     }
@@ -55,7 +63,7 @@ public class WordDictionary {
      */
     public void init(Path configFile) {
         String abspath = configFile.toAbsolutePath().toString();
-        System.out.println("initialize user dictionary:" + abspath);
+        LOG.info("initialize user dictionary:" + abspath);
         synchronized (WordDictionary.class) {
             if (loadedPath.contains(abspath))
                 return;
@@ -64,14 +72,14 @@ public class WordDictionary {
             try {
                 stream = Files.newDirectoryStream(configFile, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
                 for (Path path: stream){
-                    System.err.println(String.format(Locale.getDefault(), "loading dict %s", path.toString()));
+                    LOG.info(String.format(Locale.getDefault(), "loading dict %s", path.toString()));
                     singleton.loadUserDict(path);
                 }
                 loadedPath.add(abspath);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 // e.printStackTrace();
-                System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
+                LOG.warn(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
             }
         }
     }
@@ -93,8 +101,8 @@ public class WordDictionary {
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 
             long s = System.currentTimeMillis();
-            while (br.ready()) {
-                String line = br.readLine();
+            String line = null;
+            while ((line = br.readLine()) != null) {
                 String[] tokens = line.split("[\t ]+");
 
                 if (tokens.length < 2)
@@ -111,11 +119,11 @@ public class WordDictionary {
                 entry.setValue((Math.log(entry.getValue() / total)));
                 minFreq = Math.min(entry.getValue(), minFreq);
             }
-            System.out.println(String.format(Locale.getDefault(), "main dict load finished, time elapsed %d ms",
+            LOG.info(String.format(Locale.getDefault(), "main dict load finished, time elapsed %d ms",
                 System.currentTimeMillis() - s));
         }
         catch (IOException e) {
-            System.err.println(String.format(Locale.getDefault(), "%s load failure!", MAIN_DICT));
+            LOG.warn(String.format(Locale.getDefault(), "%s load failure!", MAIN_DICT));
         }
         finally {
             try {
@@ -123,7 +131,7 @@ public class WordDictionary {
                     is.close();
             }
             catch (IOException e) {
-                System.err.println(String.format(Locale.getDefault(), "%s close failure!", MAIN_DICT));
+                LOG.warn(String.format(Locale.getDefault(), "%s close failure!", MAIN_DICT));
             }
         }
     }
@@ -145,9 +153,9 @@ public class WordDictionary {
         try {
             BufferedReader br = Files.newBufferedReader(userDict, charset);
             loadUserDict(br);
-            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
+            LOG.info(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
         } catch(IOException e) {
-            System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+            LOG.warn(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
         }
     }
 
@@ -156,9 +164,9 @@ public class WordDictionary {
         try {
             BufferedReader br = Files.newBufferedReader(userDict, StandardCharsets.UTF_8);
             loadUserDict(br);
-            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
+            LOG.info(String.format(Locale.getDefault(), "user dict %s load finished", userDict.toString()));
         } catch(IOException e) {
-             System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+             LOG.warn(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
         }
     }
 
@@ -173,8 +181,8 @@ public class WordDictionary {
             }       
             long s = System.currentTimeMillis();
             int count = 0;
-            while (br.ready()) {
-                String line = br.readLine();
+            String line = null;
+            while ((line = br.readLine()) != null) {
                 String[] tokens = line.split("[\t ]+");
 
                 if (tokens.length < 1) {
@@ -191,7 +199,7 @@ public class WordDictionary {
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
-            System.out.println(String.format(Locale.getDefault(), "load finished, tot words:%d, time elapsed:%dms",  count, System.currentTimeMillis() - s));
+            LOG.info(String.format(Locale.getDefault(), "load finished, tot words:%d, time elapsed:%dms",  count, System.currentTimeMillis() - s));
         } catch (IOException e) {
             throw e;        
         } finally {
