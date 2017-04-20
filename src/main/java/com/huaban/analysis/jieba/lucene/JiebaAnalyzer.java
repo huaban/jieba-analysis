@@ -20,7 +20,7 @@ public class JiebaAnalyzer extends Analyzer {
 	 * 
 	 */
 	public JiebaAnalyzer() {
-		this(SegMode.SEARCH.name());
+		this(SegMode.INDEX.name());
 	}
 	
 	public JiebaAnalyzer(String segMode) {

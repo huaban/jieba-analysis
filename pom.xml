@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.huaban</groupId>
     <artifactId>jieba-analysis</artifactId>
-    <version>1.0.3a</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
 
     <name>结巴分词工具(jieba for java)</name>
@@ -67,12 +67,14 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>4.6.1</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
             <version>4.6.1</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

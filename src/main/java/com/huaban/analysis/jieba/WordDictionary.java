@@ -1,5 +1,6 @@
 package com.huaban.analysis.jieba;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -24,7 +26,7 @@ import java.util.Set;
 public class WordDictionary {
     private static WordDictionary singleton;
     private static final String MAIN_DICT = "/dict.txt";
-    private static String USER_DICT_SUFFIX = ".dict";
+    private static final String USER_DICT_SUFFIX = ".dict";
 
     public final Map<String, Double> freqs = new HashMap<String, Double>();
     public final Set<String> loadedPath = new HashSet<String>();
@@ -40,6 +42,15 @@ public class WordDictionary {
 
     private WordDictionary() {
         this.loadDict();
+        String userDictPath = System.getenv().get("USER_DICT_PATH");
+        if (StringUtils.isBlank(userDictPath)) {
+            userDictPath = System.getProperty("user.dict.path");
+        }
+
+        if(StringUtils.isNoneBlank(userDictPath)) {
+            this.addUserDictDir(Paths.get(userDictPath));
+            LOG.info("add user dict path {}", userDictPath);
+        }
     }
 
 
@@ -59,10 +70,10 @@ public class WordDictionary {
     /**
      * for ES to initialize the user dictionary.
      * 
-     * @param configFile
+     * @param dictDir
      */
-    public void init(Path configFile) {
-        String abspath = configFile.toAbsolutePath().toString();
+    public void addUserDictDir(Path dictDir) {
+        String abspath = dictDir.toAbsolutePath().toString();
         LOG.info("initialize user dictionary:" + abspath);
         synchronized (WordDictionary.class) {
             if (loadedPath.contains(abspath))
@@ -70,16 +81,14 @@ public class WordDictionary {
             
             DirectoryStream<Path> stream;
             try {
-                stream = Files.newDirectoryStream(configFile, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
-                for (Path path: stream){
+                stream = Files.newDirectoryStream(dictDir, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
+                for (Path path : stream){
                     LOG.info(String.format(Locale.getDefault(), "loading dict %s", path.toString()));
-                    singleton.loadUserDict(path);
+                    loadUserDict(path);
                 }
                 loadedPath.add(abspath);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
-                LOG.warn(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
+                LOG.warn(String.format(Locale.getDefault(), "%s: load user dict failure!", dictDir.toString()));
             }
         }
     }
