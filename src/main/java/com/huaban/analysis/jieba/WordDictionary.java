@@ -1,6 +1,6 @@
 package com.huaban.analysis.jieba;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class WordDictionary {
             userDictPath = System.getProperty("user.dict.path");
         }
 
-        if(StringUtils.isNoneBlank(userDictPath)) {
+        if(StringUtils.isNotBlank(userDictPath)) {
             this.addUserDictDir(Paths.get(userDictPath));
             LOG.info("add user dict path {}", userDictPath);
         }
