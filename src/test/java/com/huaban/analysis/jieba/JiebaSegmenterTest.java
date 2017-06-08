@@ -132,7 +132,7 @@ public class JiebaSegmenterTest extends TestCase {
     @Test
     public void testCutForSearch() {
         for (String sentence : sentences) {
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
