@@ -9,23 +9,17 @@ public class CharacterUtil {
 
 
     public static boolean isChineseLetter(char ch) {
-        if (ch >= 0x4E00 && ch <= 0x9FA5)
-            return true;
-        return false;
+        return ch >= 0x4E00 && ch <= 0x9FA5;
     }
 
 
     public static boolean isEnglishLetter(char ch) {
-        if ((ch >= 0x0041 && ch <= 0x005A) || (ch >= 0x0061 && ch <= 0x007A))
-            return true;
-        return false;
+        return  ((ch >= 0x0041 && ch <= 0x005A) || (ch >= 0x0061 && ch <= 0x007A));
     }
 
 
     public static boolean isDigit(char ch) {
-        if (ch >= 0x0030 && ch <= 0x0039)
-            return true;
-        return false;
+        return (ch >= 0x0030 && ch <= 0x0039);
     }
 
 

@@ -4,29 +4,25 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 
 public class WordDictionary {
     private static WordDictionary singleton;
-    private static final String MAIN_DICT = "/dict.txt";
-    private static final String USER_DICT_SUFFIX = ".dict";
+
+
+    public static final String MAIN_DICT = "/dict.txt";
+
+
+    public static final String USER_DICT_SUFFIX = ".dict";
 
     public final Map<String, Double> freqs = new HashMap<String, Double>();
     public final Set<String> loadedPath = new HashSet<String>();
@@ -39,17 +35,30 @@ public class WordDictionary {
     private static Logger LOG = LoggerFactory.getLogger(WordDictionary.class);
 
 
-
+    /**
+     * 自动初始化
+     */
     private WordDictionary() {
-        this.loadDict();
-        String userDictPath = System.getenv().get("USER_DICT_PATH");
-        if (StringUtils.isBlank(userDictPath)) {
-            userDictPath = System.getProperty("user.dict.path");
-        }
+        this(true);
+    }
 
-        if(StringUtils.isNotBlank(userDictPath)) {
-            this.addUserDictDir(Paths.get(userDictPath));
-            LOG.info("add user dict path {}", userDictPath);
+
+    /**
+     * 选择性初始化
+     * @param loadDict 是否加载词典
+     */
+    private WordDictionary(boolean loadDict) {
+        if(loadDict) {
+            this.loadDict();
+            String userDictPath = System.getenv().get("USER_DICT_PATH");
+            if (StringUtils.isBlank(userDictPath)) {
+                userDictPath = System.getProperty("user.dict.path");
+            }
+
+            if (StringUtils.isNotBlank(userDictPath)) {
+                this.addUserDictDir(Paths.get(userDictPath));
+                LOG.info("add user dict path {}", userDictPath);
+            }
         }
     }
 
@@ -64,6 +73,35 @@ public class WordDictionary {
             }
         }
         return singleton;
+    }
+
+
+    /**
+     * 新的实例，词典
+     *
+     * @param dict 词典
+     * @return 返回词典
+     */
+    public static WordDictionary newInstance(String... dict) {
+        return newInstance(Arrays.asList(dict));
+    }
+
+
+    /**
+     * 新的实例，词典
+     *
+     * @param dict 词典
+     * @return 返回词典
+     */
+    public static WordDictionary newInstance(List<String> dict) {
+        WordDictionary dictionary = new WordDictionary(false);
+        try {
+            dictionary.resetDict();
+            dictionary.loadUserDict(new StringReader(StringUtils.join(dict, "\n")));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return dictionary;
     }
 
 
@@ -233,10 +271,13 @@ public class WordDictionary {
     }
 
 
+    /**
+     * 获取频率
+     * @param key
+     * @return
+     */
     public Double getFreq(String key) {
-        if (containsWord(key))
-            return freqs.get(key);
-        else
-            return minFreq;
+        Double aDouble = freqs.get(key);
+        return aDouble != null ? aDouble : minFreq;
     }
 }

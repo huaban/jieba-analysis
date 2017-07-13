@@ -1,11 +1,11 @@
 package com.huaban.analysis.jieba;
 
 public class SegToken {
-    public String word;
+    public final String word;
 
-    public int startOffset;
+    public final int startOffset;
 
-    public int endOffset;
+    public final int endOffset;
 
 
     public SegToken(String word, int startOffset, int endOffset) {
