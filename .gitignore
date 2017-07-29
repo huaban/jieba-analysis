@@ -7,4 +7,6 @@ target/
 *.war
 *.ear
 
-jieba-analysis.iml
+*.iml
+*.ipr
+*.iws
