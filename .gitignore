@@ -1,10 +1,13 @@
 *.class
 \.*
 target/
+out/
 
 # Package Files #
 *.jar
 *.war
 *.ear
 
-jieba-analysis.iml
+*.iml
+*.ipr
+*.iws
