@@ -16,6 +16,7 @@
 
 package com.huaban.analysis.jieba;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
@@ -40,6 +41,19 @@ public class WordDictionaryTest {
         wordDict.loadUserDict(Paths.get(url.toURI()));
         d = wordDict.getFreq("司机");
         System.out.println(d);
+    }
+
+    @Test
+    public void test_useDefaultDict() {
+        WordDictionary wordDict = WordDictionary.getInstance();
+        Assert.assertTrue(wordDict.isUseDefaultDict());
+    }
+
+    @Test
+    public void test_useDefaultDict2() {
+        System.setProperty("jieba.defaultDict", "false");
+        WordDictionary wordDict = WordDictionary.getInstance();
+        Assert.assertTrue(wordDict.isUseDefaultDict() == false);
     }
 
 }

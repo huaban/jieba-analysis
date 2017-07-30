@@ -9,12 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 
 public class WordDictionary {
@@ -27,10 +23,24 @@ public class WordDictionary {
     private Double minFreq = Double.MAX_VALUE;
     private Double total = 0.0;
     private DictSegment _dict;
+    private boolean useDefaultDict = true;
 
+    private static final String CONFIG_NAME = "jieba.defaultDict";
 
     private WordDictionary() {
-        this.loadDict();
+        loadConfig();
+
+        if (this.useDefaultDict) {
+            this.loadDict();
+        }
+    }
+
+    private void loadConfig() {
+        String configString = System.getenv(CONFIG_NAME);
+        if (configString == null) {
+            configString = System.getProperty(CONFIG_NAME, "true");
+        }
+        this.useDefaultDict = Boolean.valueOf(configString);
     }
 
 
@@ -205,6 +215,9 @@ public class WordDictionary {
         return freqs.containsKey(word);
     }
 
+    public boolean isUseDefaultDict() {
+        return useDefaultDict;
+    }
 
     public Double getFreq(String key) {
         if (containsWord(key))
