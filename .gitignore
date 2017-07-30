@@ -1,6 +1,7 @@
 *.class
 \.*
 target/
+out/
 
 # Package Files #
 *.jar

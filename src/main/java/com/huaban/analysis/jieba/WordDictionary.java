@@ -18,11 +18,11 @@ import java.util.Set;
 
 
 public class WordDictionary {
-    private static WordDictionary singleton;
+    private static volatile WordDictionary singleton;
     private static final String MAIN_DICT = "/dict.txt";
     private static String USER_DICT_SUFFIX = ".dict";
 
-    public final Map<String, Double> freqs = new HashMap<String, Double>();
+    public final Map<String, ComputedFreq> freqs = new HashMap<String, ComputedFreq>();
     public final Set<String> loadedPath = new HashSet<String>();
     private Double minFreq = Double.MAX_VALUE;
     private Double total = 0.0;
@@ -100,16 +100,12 @@ public class WordDictionary {
                     continue;
 
                 String word = tokens[0];
-                double freq = Double.valueOf(tokens[1]);
+                int freq = Integer.valueOf(tokens[1]);
                 total += freq;
                 word = addWord(word);
-                freqs.put(word, freq);
+                freqs.put(word, new ComputedFreq(freq));
             }
-            // normalize
-            for (Entry<String, Double> entry : freqs.entrySet()) {
-                entry.setValue((Math.log(entry.getValue() / total)));
-                minFreq = Math.min(entry.getValue(), minFreq);
-            }
+            normalizeFreqs();
             System.out.println(String.format(Locale.getDefault(), "main dict load finished, time elapsed %d ms",
                 System.currentTimeMillis() - s));
         }
@@ -124,6 +120,14 @@ public class WordDictionary {
             catch (IOException e) {
                 System.err.println(String.format(Locale.getDefault(), "%s close failure!", MAIN_DICT));
             }
+        }
+    }
+
+    private void normalizeFreqs() {
+        // normalize
+        for (Entry<String, ComputedFreq> entry : freqs.entrySet()) {
+            entry.getValue().compFreq = Math.log((double) entry.getValue().freq / total);
+            minFreq = Math.min(entry.getValue().compFreq, minFreq);
         }
     }
 
@@ -144,9 +148,10 @@ public class WordDictionary {
     }
 
 
-    public void loadUserDict(Path userDict, Charset charset) {                
+    public void loadUserDict(Path userDict, Charset charset) {
+        BufferedReader br = null;
         try {
-            BufferedReader br = Files.newBufferedReader(userDict, charset);
+            br = Files.newBufferedReader(userDict, charset);
             long s = System.currentTimeMillis();
             int count = 0;
             while (br.ready()) {
@@ -160,18 +165,33 @@ public class WordDictionary {
 
                 String word = tokens[0];
 
-                double freq = 3.0d;
-                if (tokens.length == 2)
-                    freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
-                freqs.put(word, Math.log(freq / total));
+                int freq = 3;
+                if (tokens.length >= 2)
+                    freq = Integer.valueOf(tokens[1]);
+                word = addWord(word);
+                ComputedFreq computedFreq = freqs.get(word);
+                if (computedFreq == null) {
+                    freqs.put(word, new ComputedFreq(freq));
+                } else {
+                    computedFreq.freq += freq;
+                }
+                total += freq;
                 count++;
             }
+            normalizeFreqs();
             System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
-            br.close();
         }
         catch (IOException e) {
             System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    System.err.println(String.format(Locale.getDefault(),
+                            "%s: load user dict failure! %s", userDict.toString(), e.getMessage()));
+                }
+            }
         }
     }
 
@@ -188,8 +208,17 @@ public class WordDictionary {
 
     public Double getFreq(String key) {
         if (containsWord(key))
-            return freqs.get(key);
+            return freqs.get(key).compFreq;
         else
             return minFreq;
+    }
+
+    private static class ComputedFreq {
+        private double compFreq;
+        private int freq;
+
+        public ComputedFreq(int freq) {
+            this.freq = freq;
+        }
     }
 }

@@ -5,7 +5,7 @@ apply plugin: 'idea'
 group = 'com.huaban'
 version = '1.0.3-SNAPSHOT'
 
-description = """结巴分词工具(jieba for java)"""
+description = """缁撳反鍒嗚瘝宸ュ叿(jieba for java)"""
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
