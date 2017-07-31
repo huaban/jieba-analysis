@@ -1,5 +1,6 @@
 package com.huaban.analysis.jieba;
 
+import com.huaban.analysis.jieba.viterbi.FinalSeg;
 import com.huaban.analysis.jieba.viterbi.SingleWordSeg;
 
 import java.util.*;
@@ -12,7 +13,8 @@ import java.util.*;
  * @author zhenqin
  */
 public class JiebaCusDictSegmenter {
-    protected static SingleWordSeg seg = SingleWordSeg.getInstance();
+    //protected static SingleWordSeg seg = SingleWordSeg.getInstance();
+    private static FinalSeg seg = FinalSeg.getInstance();
 
 
     private Map<Integer, List<Integer>> createDAG(String sentence, WordDictionary wordDict) {
@@ -98,7 +100,18 @@ public class JiebaCusDictSegmenter {
      * @return 返回分词
      */
     public List<String> sentenceProcess(String sentence, List<String> dict, boolean containsSingle) {
-        WordDictionary wordDict = WordDictionary.newInstance(dict);
+        return sentenceProcess(sentence, WordDictionary.newInstance(dict), containsSingle);
+    }
+
+    /**
+     *
+     * 按照 dict 的词库分词
+     *
+     * @param sentence 句子
+     * @param wordDict 词典
+     * @return 返回分词
+     */
+    public List<String> sentenceProcess(String sentence, WordDictionary wordDict, boolean containsSingle) {
         List<String> tokens = new ArrayList<String>();
         int N = sentence.length();
         Map<Integer, List<Integer>> dag = createDAG(sentence, wordDict);
@@ -152,8 +165,8 @@ public class JiebaCusDictSegmenter {
 
     public static void main(String[] args) {
         JiebaCusDictSegmenter jiebaCusDictSegmenter = new JiebaCusDictSegmenter();
-        List<String> dict = Arrays.asList("亲口交代 10", "工信处 10", "24口 10");
-        List<String> strings = jiebaCusDictSegmenter.sentenceProcess("工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作",
+        List<String> dict = Arrays.asList("读取 10", "保 100", "手动 10");
+        List<String> strings = jiebaCusDictSegmenter.sentenceProcess("这种保存方法对数据读取有要求，需要手动指定读出来的数据的的dtype，如果指定的格式与保存时的不一致，则读出来的就是错误的数据。",
                 dict, false);
         System.out.println(strings);
     }
