@@ -9,6 +9,10 @@
 
 结巴分词(java版)只保留的原项目针对搜索引擎分词的功能(cut~forindex~、cut~forsearch~)，词性标注，关键词提取没有实现(今后如用到，可以考虑实现)。
 
+
+原项目见：[https://github.com/huaban/jieba-analysis](https://github.com/huaban/jieba-analysis), 本项目为了使用简便合并了 https://github.com/sing1ee/jieba-solr，
+本项目修复了原项目的部分 Bug 和 api，更方便集成 Lucene 或者 Solr 来使用。同时扩展了用户词库，能更方便的添加用户词库；
+
 简介
 ====
 
@@ -47,7 +51,7 @@
     <dependency>
       <groupId>com.huaban</groupId>
       <artifactId>jieba-analysis</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>1.0.3a</version>
     </dependency>
     ```
 
@@ -55,6 +59,8 @@
 ========
 
 -   Demo
+
+### Java Analysis
 
 ``` {.java}
 
@@ -68,6 +74,28 @@ public void testDemo() {
         System.out.println(segmenter.process(sentence, SegMode.INDEX).toString());
     }
 }
+```
+
+### Solr结巴分词
+
+```xml
+
+    <fieldType name="text_jieba" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="jieba.solr.JiebaTokenizerFactory"  segMode="SEARCH"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="English"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="jieba.solr.JiebaTokenizerFactory"  segMode="SEARCH"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="English"/>
+      </analyzer>
+    </fieldType>
+
 ```
 
 算法(wiki补充...)

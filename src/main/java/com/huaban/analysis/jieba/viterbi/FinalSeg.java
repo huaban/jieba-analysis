@@ -16,6 +16,8 @@ import java.util.Collections;
 import com.huaban.analysis.jieba.CharacterUtil;
 import com.huaban.analysis.jieba.Pair;
 import com.huaban.analysis.jieba.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class FinalSeg {
@@ -27,6 +29,11 @@ public class FinalSeg {
     private static Map<Character, Map<Character, Double>> trans;
     private static Map<Character, char[]> prevStatus;
     private static Double MIN_FLOAT = -3.14e100;;
+
+
+
+
+    private static Logger LOG = LoggerFactory.getLogger(FinalSeg.class);
 
 
     private FinalSeg() {
@@ -92,7 +99,7 @@ public class FinalSeg {
             }
         }
         catch (IOException e) {
-            System.err.println(String.format(Locale.getDefault(), "%s: load model failure!", PROB_EMIT));
+            LOG.warn(String.format(Locale.getDefault(), "%s: load model failure!", PROB_EMIT));
         }
         finally {
             try {
@@ -100,10 +107,10 @@ public class FinalSeg {
                     is.close();
             }
             catch (IOException e) {
-                System.err.println(String.format(Locale.getDefault(), "%s: close failure!", PROB_EMIT));
+                LOG.warn(String.format(Locale.getDefault(), "%s: close failure!", PROB_EMIT));
             }
         }
-        System.out.println(String.format(Locale.getDefault(), "model load finished, time elapsed %d ms.",
+        LOG.info(String.format(Locale.getDefault(), "model load finished, time elapsed %d ms.",
             System.currentTimeMillis() - s));
     }
 

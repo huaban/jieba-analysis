@@ -119,7 +119,7 @@ public class JiebaSegmenterTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        WordDictionary.getInstance().init(Paths.get("conf"));
+        WordDictionary.getInstance().addUserDictDir(Paths.get("conf"));
     }
 
 
