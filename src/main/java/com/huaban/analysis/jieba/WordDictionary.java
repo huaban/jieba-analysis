@@ -138,13 +138,12 @@ public class WordDictionary {
             return null;
     }
 
-
     public void loadUserDict(Path userDict) {
         loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
 
-    public void loadUserDict(Path userDict, Charset charset) {                
+    public synchronized void loadUserDict(Path userDict, Charset charset) {
         try {
             BufferedReader br = Files.newBufferedReader(userDict, charset);
             long s = System.currentTimeMillis();
