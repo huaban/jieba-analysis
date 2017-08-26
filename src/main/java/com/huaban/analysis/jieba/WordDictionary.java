@@ -1,20 +1,18 @@
 package com.huaban.analysis.jieba;
 
 import java.io.BufferedReader;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 
 public class WordDictionary {
@@ -27,6 +25,8 @@ public class WordDictionary {
     private Double minFreq = Double.MAX_VALUE;
     private Double total = 0.0;
     private DictSegment _dict;
+    private long lastModifiedTimestamp = 0l;
+    private Calendar calendar = Calendar.getInstance();
 
 
     private WordDictionary() {
@@ -142,8 +142,40 @@ public class WordDictionary {
         loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
+    private boolean isModified(Path userDict){
+        //Watch userDict if changed or not
+        long start = System.currentTimeMillis();
+        try {
+            FileTime fileTime = Files.getLastModifiedTime(userDict);
+            if(lastModifiedTimestamp == 0l){
+                lastModifiedTimestamp = fileTime.toMillis();
+                return true;
+            }
+
+            if(lastModifiedTimestamp!=fileTime.toMillis()){
+                lastModifiedTimestamp = fileTime.toMillis();
+                return true;
+            }
+
+            calendar.setTimeInMillis(lastModifiedTimestamp);
+            String timeStamp = new SimpleDateFormat(" MM/dd/yyyy HH:mm:ss").format(calendar.getTime());
+            System.out.println(String.format("[%s] user dict not changed since:%s, tot words:%d, time elapsed:%dms"
+                    , Thread.currentThread().getName()
+                    , timeStamp
+                    , freqs.size()
+                    , System.currentTimeMillis() - start));
+            return false;
+        }catch (IOException e){
+            System.err.println("error while getLastModifiedTime:"+e);
+            return true;
+        }
+    }
 
     public synchronized void loadUserDict(Path userDict, Charset charset) {
+        if(!isModified(userDict)){
+            return;
+        }
+
         try {
             BufferedReader br = Files.newBufferedReader(userDict, charset);
             long s = System.currentTimeMillis();

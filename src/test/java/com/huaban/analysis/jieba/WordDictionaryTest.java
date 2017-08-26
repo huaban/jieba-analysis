@@ -28,14 +28,7 @@ public class WordDictionaryTest extends TestCase {
     }
 
     @Test
-    public void test01_singleThread(){
-        WordDictionary.getInstance().loadUserDict(path);
-        boolean isContainsWord = WordDictionary.getInstance().containsWord(TERM);
-        assertTrue(isContainsWord);
-    }
-
-    @Test
-    public void test02_multiThread(){
+    public void test_multiThread(){
         int threadSize= 10;
         ExecutorService service = Executors.newCachedThreadPool();
         List<Future<?>> futures = new ArrayList<Future<?>>();
