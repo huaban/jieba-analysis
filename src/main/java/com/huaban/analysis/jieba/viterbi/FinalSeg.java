@@ -16,8 +16,10 @@ import java.util.Collections;
 import com.huaban.analysis.jieba.CharacterUtil;
 import com.huaban.analysis.jieba.Pair;
 import com.huaban.analysis.jieba.Node;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class FinalSeg {
     private static FinalSeg singleInstance;
     private static final String PROB_EMIT = "/prob_emit.txt";
@@ -90,21 +92,18 @@ public class FinalSeg {
                     values.put(tokens[0].charAt(0), Double.valueOf(tokens[1]));
                 }
             }
-        }
-        catch (IOException e) {
-            System.err.println(String.format(Locale.getDefault(), "%s: load model failure!", PROB_EMIT));
-        }
-        finally {
+        } catch (IOException e) {
+            log.error("{}: load model failure!", PROB_EMIT, e);
+        } finally {
             try {
                 if (null != is)
                     is.close();
             }
             catch (IOException e) {
-                System.err.println(String.format(Locale.getDefault(), "%s: close failure!", PROB_EMIT));
+                log.error("{}: close failure!", PROB_EMIT, e);
             }
         }
-        System.out.println(String.format(Locale.getDefault(), "model load finished, time elapsed %d ms.",
-            System.currentTimeMillis() - s));
+        log.info("model load finished, time elapsed {} ms.", System.currentTimeMillis() - s);
     }
 
 
