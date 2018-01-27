@@ -140,43 +140,63 @@ public class WordDictionary {
         loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
-
     public void loadUserDict(Path userDict, Charset charset) {
         BufferedReader br = null;
         try {
+            log.info("to read user dict {}", userDict);
             br = Files.newBufferedReader(userDict, charset);
-            long s = System.currentTimeMillis();
-            int count = 0;
-            while (br.ready()) {
-                String line = br.readLine();
-                String[] tokens = line.split("[\t ]+");
-
-                if (tokens.length < 1) {
-                    // Ignore empty line
-                    continue;
-                }
-
-                String word = tokens[0];
-
-                double freq = 3.0d;
-                if (tokens.length == 2)
-                    freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
-                freqs.put(word, Math.log(freq / total));
-                count++;
-            }
-            log.info("user dict {} load finished, total words: {}, time elapsed: {} ms", userDict, count, System.currentTimeMillis() - s);
+            loadUserDict(br);
         } catch (IOException e) {
-            log.error("{}: load user dict failure!", userDict, e);
+            log.error("load user dict {} failure!", userDict, e);
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    log.error("{} close failure!", userDict, e);
+                    log.error("close BufferedReader failure!", e);
                 }
             }
         }
+    }
+
+    public void loadUserDict(InputStream is) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        try {
+            log.info("to read user dict from InputStream");
+            loadUserDict(br);
+        } catch (IOException e) {
+            log.error("load user dict failure!", e);
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                log.error("close BufferedReader failure!", e);
+            }
+        }
+    }
+
+    public void loadUserDict(BufferedReader br) throws IOException {
+          long s = System.currentTimeMillis();
+          int count = 0;
+          while (br.ready()) {
+              String line = br.readLine();
+              String[] tokens = line.split("[\t ]+");
+
+              if (tokens.length < 1) {
+                  // Ignore empty line
+                  continue;
+              }
+
+              String word = tokens[0];
+
+              double freq = 3.0d;
+              if (tokens.length == 2)
+                  freq = Double.valueOf(tokens[1]);
+              word = addWord(word);
+              freqs.put(word, Math.log(freq / total));
+              count++;
+          }
+          log.info("user dict load finished, total words: {}, time elapsed: {} ms", count, System.currentTimeMillis() - s);
     }
 
 
