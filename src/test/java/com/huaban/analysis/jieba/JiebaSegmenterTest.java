@@ -3,7 +3,6 @@
  */
 package com.huaban.analysis.jieba;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
@@ -14,6 +13,8 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -21,6 +22,7 @@ import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
  * 
  */
 public class JiebaSegmenterTest extends TestCase {
+    private Logger logger = LoggerFactory.getLogger(JiebaSegmenterTest.class);
     private JiebaSegmenter segmenter = new JiebaSegmenter();
     String[] sentences =
             new String[] {
@@ -133,7 +135,7 @@ public class JiebaSegmenterTest extends TestCase {
     public void testCutForSearch() {
         for (String sentence : sentences) {
             List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
-            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+            logger.info("\n{}\n{}", sentence, tokens);
         }
     }
 
@@ -142,7 +144,7 @@ public class JiebaSegmenterTest extends TestCase {
     public void testCutForIndex() {
         for (String sentence : sentences) {
             List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
-            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+            logger.info("\n{}\n{}", sentence, tokens);
         }
     }
 
@@ -159,7 +161,7 @@ public class JiebaSegmenterTest extends TestCase {
                               "干脆就把那部蒙人的闲法给废了拉倒！RT @laoshipukong : 27日，全国人大常委会第三次审议侵权责任法草案，删除了有关医疗损害责任“举证倒置”的规定。在医患纠纷中本已处于弱势地位的消费者由此将陷入万劫不复的境地。 " };
         for (String sentence : bugs) {
             List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
-            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+            logger.info("\n{}\n{}", sentence, tokens);
         }
     }
 
@@ -176,8 +178,7 @@ public class JiebaSegmenterTest extends TestCase {
                 wordCount += sentence.length();
             }
         long elapsed = (System.currentTimeMillis() - start);
-        System.out.println(String.format(Locale.getDefault(), "time elapsed:%d, rate:%fkb/s, sentences:%.2f/s", elapsed,
-            (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0)));
+        logger.info("time elapsed: {}, rate: {}kb/s, sentences: {}/s", elapsed, length / 1024.0 / (elapsed / 1000.0), wordCount * 1000.0 / elapsed);
     }
 
 
@@ -193,7 +194,6 @@ public class JiebaSegmenterTest extends TestCase {
                 wordCount += sentence.length();
             }
         long elapsed = (System.currentTimeMillis() - start);
-        System.out.println(String.format(Locale.getDefault(), "time elapsed:%d, rate:%fkb/s, sentences:%.2f/s", elapsed,
-            (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0)));
+        logger.info("time elapsed: {}, rate: {}kb/s, sentences: {}/s", elapsed, length / 1024.0 / (elapsed / 1000.0), wordCount * 1000.0 / elapsed);
     }
 }

@@ -1,5 +1,7 @@
 package com.huaban.analysis.jieba;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -17,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 
+@Slf4j
 public class WordDictionary {
     private static WordDictionary singleton;
     private static final String MAIN_DICT = "/dict.txt";
@@ -54,7 +57,7 @@ public class WordDictionary {
      */
     public void init(Path configFile) {
         String abspath = configFile.toAbsolutePath().toString();
-        System.out.println("initialize user dictionary:" + abspath);
+        log.info("initialize user dictionary: {}", abspath);
         synchronized (WordDictionary.class) {
             if (loadedPath.contains(abspath))
                 return;
@@ -63,14 +66,12 @@ public class WordDictionary {
             try {
                 stream = Files.newDirectoryStream(configFile, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
                 for (Path path: stream){
-                    System.err.println(String.format(Locale.getDefault(), "loading dict %s", path.toString()));
+                    log.info("loading dict {}", path);
                     singleton.loadUserDict(path);
                 }
                 loadedPath.add(abspath);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
-                System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
+                log.error("{}: load user dict failure", configFile, e);
             }
         }
     }
@@ -110,19 +111,15 @@ public class WordDictionary {
                 entry.setValue((Math.log(entry.getValue() / total)));
                 minFreq = Math.min(entry.getValue(), minFreq);
             }
-            System.out.println(String.format(Locale.getDefault(), "main dict load finished, time elapsed %d ms",
-                System.currentTimeMillis() - s));
-        }
-        catch (IOException e) {
-            System.err.println(String.format(Locale.getDefault(), "%s load failure!", MAIN_DICT));
-        }
-        finally {
+            log.info("main dict load finished, time elapsed {} ms", System.currentTimeMillis() - s);
+        } catch (IOException e) {
+            log.error("{} load failure", MAIN_DICT, e);
+        } finally {
             try {
                 if (null != is)
                     is.close();
-            }
-            catch (IOException e) {
-                System.err.println(String.format(Locale.getDefault(), "%s close failure!", MAIN_DICT));
+            } catch (IOException e) {
+                log.error("{} close failure!", MAIN_DICT, e);
             }
         }
     }
@@ -143,36 +140,63 @@ public class WordDictionary {
         loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
-
-    public void loadUserDict(Path userDict, Charset charset) {                
+    public void loadUserDict(Path userDict, Charset charset) {
+        BufferedReader br = null;
         try {
-            BufferedReader br = Files.newBufferedReader(userDict, charset);
-            long s = System.currentTimeMillis();
-            int count = 0;
-            while (br.ready()) {
-                String line = br.readLine();
-                String[] tokens = line.split("[\t ]+");
-
-                if (tokens.length < 1) {
-                    // Ignore empty line
-                    continue;
+            log.info("to read user dict {}", userDict);
+            br = Files.newBufferedReader(userDict, charset);
+            loadUserDict(br);
+        } catch (IOException e) {
+            log.error("load user dict {} failure!", userDict, e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    log.error("close BufferedReader failure!", e);
                 }
-
-                String word = tokens[0];
-
-                double freq = 3.0d;
-                if (tokens.length == 2)
-                    freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
-                freqs.put(word, Math.log(freq / total));
-                count++;
             }
-            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
-            br.close();
         }
-        catch (IOException e) {
-            System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+    }
+
+    public void loadUserDict(InputStream is) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        try {
+            log.info("to read user dict from InputStream");
+            loadUserDict(br);
+        } catch (IOException e) {
+            log.error("load user dict failure!", e);
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                log.error("close BufferedReader failure!", e);
+            }
         }
+    }
+
+    public void loadUserDict(BufferedReader br) throws IOException {
+          long s = System.currentTimeMillis();
+          int count = 0;
+          while (br.ready()) {
+              String line = br.readLine();
+              String[] tokens = line.split("[\t ]+");
+
+              if (tokens.length < 1) {
+                  // Ignore empty line
+                  continue;
+              }
+
+              String word = tokens[0];
+
+              double freq = 3.0d;
+              if (tokens.length == 2)
+                  freq = Double.valueOf(tokens[1]);
+              word = addWord(word);
+              freqs.put(word, Math.log(freq / total));
+              count++;
+          }
+          log.info("user dict load finished, total words: {}, time elapsed: {} ms", count, System.currentTimeMillis() - s);
     }
 
 
