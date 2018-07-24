@@ -17,7 +17,15 @@ public class JiebaSegmenter {
         SEARCH
     }
 
-
+    /**
+     * initialize the user dictionary.
+     *
+     * @param path user dict dir
+     */
+    public void initUserDict(Path path){
+        wordDict.init(path);
+    }
+    
     private Map<Integer, List<Integer>> createDAG(String sentence) {
         Map<Integer, List<Integer>> dag = new HashMap<Integer, List<Integer>>();
         DictSegment trie = wordDict.getTrie();
