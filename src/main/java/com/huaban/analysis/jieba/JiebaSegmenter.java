@@ -17,6 +17,11 @@ public class JiebaSegmenter {
         SEARCH
     }
 
+    /**
+     * initialize the user dictionary.
+     *
+     * @param path user dict dir
+     */
     public void initUserDict(Path path){
         wordDict.init(path);
     }
