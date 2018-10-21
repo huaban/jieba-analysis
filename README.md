@@ -2,11 +2,9 @@
 ===============================
 
 首先感谢jieba分词原作者[fxsjy](https://github.com/fxsjy)，没有他的无私贡献，我们也不会结识到结巴
-分词. 同时也感谢jieba分词java版本的作者[piaolingxue](https://github.com/piaolingxue)，他的努力使得Java也能直接做出效果很棒的分词。
+分词. 同时也感谢jieba分词java版本的实现团队[huaban](https://github.com/huaban)，他们的努力使得Java也能直接做出效果很棒的分词。
 
-结巴分词(java版)只保留的原项目针对搜索引擎分词的功能(cut~forindex~、cut~forsearch~)
-
-在piaolingxue的java版本基础上，我加入了tfidf的关键词提取功能，并且实现的效果和python的jieba版本的效果一模一样！
+不过由于huaban已经没有再对java版进行维护，所以我自己对项目进行了开发。除了结巴分词(java版)所保留的原项目针对搜索引擎分词的功能(cut~forindex~、cut~forsearch~)，我加入了tfidf的关键词提取功能，并且实现的效果和python的jieba版本的效果一模一样！
 
 
 （以下内容在基于[jieba-java版本README.md](https://github.com/huaban/jieba-analysis])的基础上，加入了对我新加入的tfidf关键词提取模块的相关说明)
