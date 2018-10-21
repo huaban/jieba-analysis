@@ -2,12 +2,15 @@
 ===============================
 
 首先感谢jieba分词原作者[fxsjy](https://github.com/fxsjy)，没有他的无私贡献，我们也不会结识到结巴
-分词，更不会有现在的java版本。
+分词. 同时也感谢jieba分词java版本的作者[piaolingxue](https://github.com/piaolingxue)，他的努力使得Java也能直接做出效果很棒的分词。
 
-结巴分词的原始版本为python编写，目前该项目在github上的关注量为170，
-打星727次（最新的数据以原仓库为准），Fork238次，可以说已经有一定的用户群。
+结巴分词(java版)只保留的原项目针对搜索引擎分词的功能(cut~forindex~、cut~forsearch~)
 
-结巴分词(java版)只保留的原项目针对搜索引擎分词的功能(cut~forindex~、cut~forsearch~)，词性标注没有实现(今后如用到，可以考虑实现)。
+在piaolingxue的java版本基础上，我加入了tfidf的关键词提取功能，并且实现的效果和python的jieba版本的效果一模一样！
+
+
+（以下内容在基于[jieba-java版本README.md](https://github.com/huaban/jieba-analysis])的基础上，加入了对我新加入的tfidf关键词提取模块的相关说明)
+***
 
 简介
 ====
@@ -27,9 +30,23 @@
 -   conf 目录有整理的搜狗细胞词库
 -   因为性能原因，最新的快照版本去除词性标注，也希望有更好的 Pull
     Request 可以提供该功能。
--   TFIDF关键词提取
 
-如何获取
+**新特性：tfidf算法提取关键词**
+
+```{.java}
+    public static void main(String[] args)
+    {
+        String content="孩子上了幼儿园 安全防拐教育要做好";
+        int topN=5;
+        TFIDFAnalyzer tfidfAnalyzer=new TFIDFAnalyzer();
+        List<Keyword> list=tfidfAnalyzer.analyze(content,topN);
+        for(Keyword word:list)
+            System.out.println(word.getName()+":"+word.getTfidfvalue()+",");
+        // 防拐:0.1992,幼儿园:0.1434,做好:0.1065,教育:0.0946,安全:0.0924
+    }
+```
+
+<!-- 如何获取
 ========
 
 -   当前稳定版本
@@ -50,12 +67,12 @@
       <artifactId>jieba-analysis</artifactId>
       <version>1.0.3-SNAPSHOT</version>
     </dependency>
-    ```
+    ``` -->
 
 如何使用
 ========
 
-- 分词
+-   Demo
 
 ``` {.java}
 
@@ -70,23 +87,6 @@ public void testDemo() {
     }
 }
 ```
-
-- 关键词提取
-
-```{.java}
-    public static void main(String[] args)
-    {
-        String content="孩子上了幼儿园 安全防拐教育要做好";
-        int topN=5;
-        TFIDFAnalyzer tfidfAnalyzer=new TFIDFAnalyzer();
-        List<Keyword> list=tfidfAnalyzer.analyze(content,topN);
-        for(Keyword word:list)
-            System.out.println(word.getName()+":"+word.getTfidfvalue()+",");
-        // 防拐:0.1992,幼儿园:0.1434,做好:0.1065,教育:0.0946,安全:0.0924
-    }
-```
-
-
 
 算法(wiki补充...)
 =================
@@ -141,22 +141,6 @@ Memory：8GB
 ============
 
 -   [analyzer-solr](https://github.com/sing1ee/analyzer-solr) @sing1ee
-
-捐赠
-===========
-
-**一顿黄焖鸡**
-
-![](http://7xkgzh.com1.z0.glb.clouddn.com/0a9db33a25bce898c088462ddb726e57.png?imageView2/5/w/300/h/300)
-
-**请我喝一杯**
-
-![](http://7xkgzh.com1.z0.glb.clouddn.com/01e2fc2635f7ac26a9e8b21157dc2840.png?imageView2/5/w/300/h/300)
-
-**或者随君意**
-
-![](http://7xkgzh.com1.z0.glb.clouddn.com/2344d83c9be4b56cb66f696dcfb25ceb.png?imageView2/5/w/300/h/300)
-
 
 许可证
 ======
