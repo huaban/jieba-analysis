@@ -1,9 +1,6 @@
 package com.qianxinyao.analysis.jieba.keyword;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,13 +37,11 @@ public class TFIDFAnalyzer
 		
 		if(stopWordsSet==null) {
 			stopWordsSet=new HashSet<>();
-			String path=File.separator+this.getClass().getResource(File.separator).getPath().substring(1);
-			loadStopWords(stopWordsSet, path+"stop_words.txt");
+			loadStopWords(stopWordsSet, this.getClass().getResourceAsStream("/stop_words.txt"));
 		}
 		if(idfMap==null) {
 			idfMap=new HashMap<>();
-			String path=File.separator+this.getClass().getResource(File.separator).getPath().substring(1);
-			loadIDFMap(idfMap, path+"idf_dict.txt");
+			loadIDFMap(idfMap, this.getClass().getResourceAsStream("/idf_dict.txt"));
 		}
 		
 		Map<String, Double> tfMap=getTF(content);
@@ -112,11 +107,11 @@ public class TFIDFAnalyzer
 	 * @param set
 	 * @param filePath
 	 */
-	private void loadStopWords(Set<String> set, String filePath){
+	private void loadStopWords(Set<String> set, InputStream in){
 		BufferedReader bufr;
 		try
 		{
-			bufr = new BufferedReader(new FileReader(filePath));
+			bufr = new BufferedReader(new InputStreamReader(in));
 			String line=null;
 			while((line=bufr.readLine())!=null) {
 				set.add(line.trim());
@@ -142,11 +137,11 @@ public class TFIDFAnalyzer
 	 * @param set
 	 * @param filePath
 	 */
-	private void loadIDFMap(Map<String,Double> map, String filePath){
+	private void loadIDFMap(Map<String,Double> map, InputStream in ){
 		BufferedReader bufr;
 		try
 		{
-			bufr = new BufferedReader(new FileReader(filePath));
+			bufr = new BufferedReader(new InputStreamReader(in));
 			String line=null;
 			while((line=bufr.readLine())!=null) {
 				String[] kv=line.trim().split(" ");
