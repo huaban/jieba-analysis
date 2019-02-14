@@ -75,6 +75,23 @@ public class WordDictionary {
         }
     }
     
+    public void init(String[] paths) {
+        synchronized (WordDictionary.class) {
+            for (String path: paths){
+                if (!loadedPath.contains(path)) {
+                    try {
+                        System.out.println("initialize user dictionary: " + path);
+                        singleton.loadUserDict(path);
+                        loadedPath.add(path);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", path));
+                    }
+                }
+            }
+        }
+    }
     
     /**
      * let user just use their own dict instead of the default dict
@@ -143,7 +160,10 @@ public class WordDictionary {
         loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
-
+    public void loadUserDict(String userDictPath) {
+        loadUserDict(userDictPath, StandardCharsets.UTF_8);
+    }
+    
     public void loadUserDict(Path userDict, Charset charset) {                
         try {
             BufferedReader br = Files.newBufferedReader(userDict, charset);
@@ -175,7 +195,39 @@ public class WordDictionary {
         }
     }
 
+    public void loadUserDict(String userDictPath, Charset charset) {
+        InputStream is = this.getClass().getResourceAsStream(userDictPath);
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, charset));
 
+            long s = System.currentTimeMillis();
+            int count = 0;
+            while (br.ready()) {
+                String line = br.readLine();
+                String[] tokens = line.split("[\t ]+");
+
+                if (tokens.length < 1) {
+                    // Ignore empty line
+                    continue;
+                }
+
+                String word = tokens[0];
+
+                double freq = 3.0d;
+                if (tokens.length == 2)
+                    freq = Double.valueOf(tokens[1]);
+                word = addWord(word);
+                freqs.put(word, Math.log(freq / total));
+                count++;
+            }
+            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDictPath, count, System.currentTimeMillis() - s));
+            br.close();
+        }
+        catch (IOException e) {
+            System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDictPath));
+        }
+    }
+    
     public DictSegment getTrie() {
         return this._dict;
     }
