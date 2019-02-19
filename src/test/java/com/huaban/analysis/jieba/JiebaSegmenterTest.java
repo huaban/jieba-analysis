@@ -146,6 +146,50 @@ public class JiebaSegmenterTest extends TestCase {
         }
     }
 
+    @Test
+    public void testCutForSearchWithHMM() {
+        WordDictionary wordDict = WordDictionary.getInstance();
+        wordDict.resetDict();
+        for (String sentence : sentences) {
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
+            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+        }
+    }
+
+
+    @Test
+    public void testCutForIndexWithHMM() {
+        WordDictionary wordDict = WordDictionary.getInstance();
+        wordDict.resetDict();
+        for (String sentence : sentences) {
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
+            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+        }
+    }
+
+
+    @Test
+    public void testCutForSearchWithNoHMM() {
+        WordDictionary wordDict = WordDictionary.getInstance();
+        wordDict.resetDict();
+        for (String sentence : sentences) {
+            List<SegToken> tokens = segmenter.processWithNoHMM(sentence, SegMode.SEARCH);
+            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+        }
+    }
+
+
+    @Test
+    public void testCutForIndexWithNoHMM() {
+        WordDictionary wordDict = WordDictionary.getInstance();
+        wordDict.resetDict();
+        for (String sentence : sentences) {
+            List<SegToken> tokens = segmenter.processWithNoHMM(sentence, SegMode.INDEX);
+            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+        }
+    }
+
+
 
     @Test
     public void testBugSentence() {
