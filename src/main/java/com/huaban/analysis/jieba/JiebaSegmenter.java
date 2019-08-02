@@ -1,5 +1,6 @@
 package com.huaban.analysis.jieba;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,9 +98,10 @@ public class JiebaSegmenter {
         List<SegToken> tokens = new ArrayList<SegToken>();
         StringBuilder sb = new StringBuilder();
         int offset = 0;
-        for (int i = 0; i < paragraph.length(); ++i) {
+        int n= paragraph.length();
+        for (int i = 0; i < n; ++i) {
             char ch = CharacterUtil.regularize(paragraph.charAt(i));
-            if (CharacterUtil.ccFind(ch))
+			if (CharacterUtil.ccFind(ch) && i < n - 1)
                 sb.append(ch);
             else {
                 if (sb.length() > 0) {
@@ -141,36 +143,6 @@ public class JiebaSegmenter {
                     tokens.add(new SegToken(paragraph.substring(i, i + 1), offset, ++offset));
             }
         }
-        if (sb.length() > 0)
-            if (mode == SegMode.SEARCH) {
-                for (String token : sentenceProcess(sb.toString())) {
-                    tokens.add(new SegToken(token, offset, offset += token.length()));
-                }
-            }
-            else {
-                for (String token : sentenceProcess(sb.toString())) {
-                    if (token.length() > 2) {
-                        String gram2;
-                        int j = 0;
-                        for (; j < token.length() - 1; ++j) {
-                            gram2 = token.substring(j, j + 2);
-                            if (wordDict.containsWord(gram2))
-                                tokens.add(new SegToken(gram2, offset + j, offset + j + 2));
-                        }
-                    }
-                    if (token.length() > 3) {
-                        String gram3;
-                        int j = 0;
-                        for (; j < token.length() - 2; ++j) {
-                            gram3 = token.substring(j, j + 3);
-                            if (wordDict.containsWord(gram3))
-                                tokens.add(new SegToken(gram3, offset + j, offset + j + 3));
-                        }
-                    }
-                    tokens.add(new SegToken(token, offset, offset += token.length()));
-                }
-            }
-
         return tokens;
     }
 
