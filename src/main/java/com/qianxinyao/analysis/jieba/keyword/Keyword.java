@@ -58,7 +58,15 @@ public class Keyword implements Comparable<Keyword>
 	@Override
 	public int compareTo(Keyword o)
 	{
-		return this.tfidfvalue-o.tfidfvalue>0?-1:1;
+//		return this.tfidfvalue-o.tfidfvalue>0?-1:1;
+		if ((this.tfidfvalue - o.tfidfvalue)==0.0D){
+			return 0;
+		}else if(this.tfidfvalue - o.tfidfvalue > 0.0D){
+			return -1;
+		}else{
+			return 1;
+		}
+
 	}
 
 	/**
