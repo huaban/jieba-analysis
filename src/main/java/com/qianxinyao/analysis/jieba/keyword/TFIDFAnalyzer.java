@@ -54,14 +54,7 @@ public class TFIDFAnalyzer
 		}
 		
 		Collections.sort(keywordList);
-		
-		if(keywordList.size()>topN) {
-			int num=keywordList.size()-topN;
-			for(int i=0;i<num;i++) {
-				keywordList.remove(topN);
-			}
-		}
-		return keywordList;
+		return keywordList.size() > topN ? keywordList.subList(0, topN) : keywordList;
 	}
 	
 	/**
