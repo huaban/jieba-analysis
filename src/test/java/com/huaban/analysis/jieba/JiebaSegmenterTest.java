@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import junit.framework.TestCase;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
@@ -179,8 +178,7 @@ public class JiebaSegmenterTest extends TestCase {
         System.out.println(String.format(Locale.getDefault(), "time elapsed:%d, rate:%fkb/s, sentences:%.2f/s", elapsed,
             (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0)));
     }
-
-
+    
     @Test
     public void testLongTextSegmentSpeed() {
         long length = 0L;
