@@ -1,5 +1,6 @@
 package com.huaban.analysis.jieba;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,6 @@ public class JiebaSegmenter {
 
     public void initUserDict(String[] paths){
         wordDict.init(paths);
-
     }
     
     private Map<Integer, List<Integer>> createDAG(String sentence) {

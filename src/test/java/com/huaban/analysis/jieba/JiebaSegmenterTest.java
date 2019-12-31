@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import junit.framework.TestCase;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
@@ -162,7 +163,6 @@ public class JiebaSegmenterTest extends TestCase {
             System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
         }
     }
-
 
     @Test
     public void testSegmentSpeed() {
