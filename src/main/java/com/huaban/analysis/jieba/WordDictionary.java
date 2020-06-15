@@ -169,25 +169,37 @@ public class WordDictionary {
             BufferedReader br = Files.newBufferedReader(userDict, charset);
             long s = System.currentTimeMillis();
             int count = 0;
-            while (br.ready()) {
-                String line = br.readLine();
-                String[] tokens = line.split("[\t ]+");
-
-                if (tokens.length < 1) {
-                    // Ignore empty line
-                    continue;
+            if (userDict.toString().contains("shield")) {
+                while (br.ready()) {
+                    String line = br.readLine();
+                    shieldWord(line);
+                    count++;
                 }
+                System.out.println(String.format(Locale.getDefault(), "user dict %s for shield load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
+            } else {
+                while (br.ready()) {
+                    String line = br.readLine();
+                    String[] tokens = line.split("[\t ]+");
 
-                String word = tokens[0];
 
-                double freq = 3.0d;
-                if (tokens.length == 2)
-                    freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
-                freqs.put(word, Math.log(freq / total));
-                count++;
+                    if (tokens.length < 1) {
+                        // Ignore empty line
+                        continue;
+                    }
+
+
+                    String word = tokens[0];
+
+
+                    double freq = 3.0d;
+                    if (tokens.length == 2)
+                        freq = Double.valueOf(tokens[1]);
+                    word = addWord(word);
+                    freqs.put(word, Math.log(freq / total));
+                    count++;
+                }
+                System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
             }
-            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
             br.close();
         }
         catch (IOException e) {
@@ -202,29 +214,49 @@ public class WordDictionary {
 
             long s = System.currentTimeMillis();
             int count = 0;
-            while (br.ready()) {
-                String line = br.readLine();
-                String[] tokens = line.split("[\t ]+");
-
-                if (tokens.length < 1) {
-                    // Ignore empty line
-                    continue;
+            if (userDictPath.contains("shield")) {
+                while (br.ready()) {
+                    String line = br.readLine();
+                    shieldWord(line);
+                    count++;
                 }
+                System.out.println(String.format(Locale.getDefault(), "user dict %s for shield load finished, tot words:%d, time elapsed:%dms", userDictPath, count, System.currentTimeMillis() - s));
+            } else {
+                while (br.ready()) {
+                    String line = br.readLine();
+                    String[] tokens = line.split("[\t ]+");
 
-                String word = tokens[0];
 
-                double freq = 3.0d;
-                if (tokens.length == 2)
-                    freq = Double.valueOf(tokens[1]);
-                word = addWord(word);
-                freqs.put(word, Math.log(freq / total));
-                count++;
+                    if (tokens.length < 1) {
+                        // Ignore empty line
+                        continue;
+                    }
+
+
+                    String word = tokens[0];
+
+
+                    double freq = 3.0d;
+                    if (tokens.length == 2)
+                        freq = Double.valueOf(tokens[1]);
+                    word = addWord(word);
+                    freqs.put(word, Math.log(freq / total));
+                    count++;
+                }
+                System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDictPath, count, System.currentTimeMillis() - s));
             }
-            System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDictPath, count, System.currentTimeMillis() - s));
             br.close();
         }
         catch (IOException e) {
             System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", userDictPath));
+        }
+    }
+
+    private void shieldWord(String word) {
+        if (null != word && !"".equals(word.trim())) {
+            String key = word.trim().toLowerCase(Locale.getDefault());
+            _dict.disableSegment(key.toCharArray());
+            freqs.remove(word);
         }
     }
     
