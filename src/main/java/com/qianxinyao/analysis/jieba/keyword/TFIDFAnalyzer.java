@@ -36,12 +36,20 @@ public class TFIDFAnalyzer
 		List<Keyword> keywordList=new ArrayList<>();
 		
 		if(stopWordsSet==null) {
-			stopWordsSet=new HashSet<>();
-			loadStopWords(stopWordsSet, this.getClass().getResourceAsStream("/stop_words.txt"));
+			synchronized (TFIDFAnalyzer.class) {
+				if(stopWordsSet==null) {
+					stopWordsSet=new HashSet<>();
+					loadStopWords(stopWordsSet, this.getClass().getResourceAsStream("/stop_words.txt"));
+				}
+			}
 		}
 		if(idfMap==null) {
-			idfMap=new HashMap<>();
-			loadIDFMap(idfMap, this.getClass().getResourceAsStream("/idf_dict.txt"));
+			synchronized (TFIDFAnalyzer.class) {
+				if(idfMap==null) {
+					idfMap=new HashMap<>();
+					loadIDFMap(idfMap, this.getClass().getResourceAsStream("/idf_dict.txt"));
+				}
+			}
 		}
 		
 		Map<String, Double> tfMap=getTF(content);
