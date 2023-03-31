@@ -27,7 +27,7 @@ public class FinalSeg {
     private static Map<Character, Double> start;
     private static Map<Character, Map<Character, Double>> trans;
     private static Map<Character, char[]> prevStatus;
-    private static Double MIN_FLOAT = -3.14e100;;
+    private static Double MIN_FLOAT = -3.14e100;
 
 
     private FinalSeg() {

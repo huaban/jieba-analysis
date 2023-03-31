@@ -9,12 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 
 public class WordDictionary {
@@ -141,7 +137,7 @@ public class WordDictionary {
     }
 
 
-    private String addWord(String word) {
+    public String addWord(String word) {
         if (null != word && !"".equals(word.trim())) {
             String key = word.trim().toLowerCase(Locale.getDefault());
             _dict.fillSegment(key.toCharArray());
@@ -150,7 +146,27 @@ public class WordDictionary {
         else
             return null;
     }
-
+    
+    
+    public String addWord(String word, double freq) {
+        word = addWord(word);
+        freqs.put(word, freq);
+        return word;
+    }
+    
+    
+    public void addWords(List<String> words) {
+        for(String word : words)
+            addWord(word);
+    }
+    
+    
+    public void addWords(Map<String, Double> words) {
+        for(Map.Entry<String, Double> entry : words.entrySet()) {
+            addWord(entry.getKey(), entry.getValue());
+        }
+    }
+    
 
     public void loadUserDict(Path userDict) {
         loadUserDict(userDict, StandardCharsets.UTF_8);
@@ -179,7 +195,7 @@ public class WordDictionary {
                 double freq = 3.0d;
                 if (tokens.length == 2)
                     freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
+                word = addWord(word);
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
