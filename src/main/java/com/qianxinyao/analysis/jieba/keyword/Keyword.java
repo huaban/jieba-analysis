@@ -57,7 +57,7 @@ public class Keyword implements Comparable<Keyword> {
         } else if (this.tfidfvalue == o.tfidfvalue) {
             return 0;
         } else {
-            return -1;
+            return 1;
         }
     }
 
