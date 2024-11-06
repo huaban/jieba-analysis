@@ -88,6 +88,27 @@ public class WordDictionary {
             }
         }
     }
+
+    public void init(Path configFile, String splitChar) {
+        String abspath = configFile.toAbsolutePath().toString();
+        Log.debug("initialize user dictionary:" + abspath);
+        synchronized (WordDictionary.class) {
+            if (loadedPath.contains(abspath))
+                return;
+
+            DirectoryStream<Path> stream;
+            try {
+                stream = Files.newDirectoryStream(configFile, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
+                for (Path path: stream){
+                    Log.error(String.format(Locale.getDefault(), "loading dict %s", path.toString()));
+                    singleton.loadUserDict(path, splitChar);
+                }
+                loadedPath.add(abspath);
+            } catch (IOException e) {
+                Log.error(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
+            }
+        }
+    }
     
     /**
      * let user just use their own dict instead of the default dict
@@ -156,6 +177,10 @@ public class WordDictionary {
         loadUserDict(userDict, StandardCharsets.UTF_8);
     }
 
+    public void loadUserDict(Path userDict, String splitChar) {
+        loadUserDict(userDict, StandardCharsets.UTF_8, splitChar);
+    }
+
     public void loadUserDict(String userDictPath) {
         loadUserDict(userDictPath, StandardCharsets.UTF_8);
     }
@@ -221,6 +246,38 @@ public class WordDictionary {
         }
         catch (IOException e) {
             Log.error(String.format(Locale.getDefault(), "%s: load user dict failure!", userDictPath));
+        }
+    }
+
+    public void loadUserDict(Path userDict, Charset charset, String splitChar) {
+        try {
+            BufferedReader br = Files.newBufferedReader(userDict, charset);
+            long s = System.currentTimeMillis();
+            int count = 0;
+            while (br.ready()) {
+                String line = br.readLine();
+                String[] tokens = line.split(splitChar);
+
+                if (tokens.length < 1) {
+                    // Ignore empty line
+                    continue;
+                }
+
+                String word = tokens[0];
+
+                double freq = 3.0d;
+                if (tokens.length == 2)
+                    freq = Double.valueOf(tokens[1]);
+                word = addWord(word);
+                freqs.put(word, Math.log(freq / total));
+                count++;
+            }
+            // System.out.println(freqs);
+            Log.debug(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
+            br.close();
+        }
+        catch (IOException e) {
+            Log.error(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
         }
     }
     

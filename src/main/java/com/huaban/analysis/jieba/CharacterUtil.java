@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 public class CharacterUtil {
     public static Pattern reSkip = Pattern.compile("(\\d+\\.\\d+|[a-zA-Z0-9]+)");
     private static final char[] connectors = new char[] { '+', '#', '&', '.', '_', '-' };
+    private static final char[] connectorsExtend = new char[] { '+', '#', '&', '.', '_', '-', ' ' };
 
 
     public static boolean isChineseLetter(char ch) {
@@ -36,6 +37,12 @@ public class CharacterUtil {
         return false;
     }
 
+    public static boolean isConnectorExtend(char ch) {
+        for (char connector : connectorsExtend)
+            if (ch == connector)
+                return true;
+        return false;
+    }
 
     public static boolean ccFind(char ch) {
         if (isChineseLetter(ch))
@@ -49,6 +56,17 @@ public class CharacterUtil {
         return false;
     }
 
+    public static boolean ccFindExtend(char ch) {
+        if (isChineseLetter(ch))
+            return true;
+        if (isEnglishLetter(ch))
+            return true;
+        if (isDigit(ch))
+            return true;
+        if (isConnectorExtend(ch))
+            return true;
+        return false;
+    }
 
     /**
      * 全角 to 半角,大写 to 小写
