@@ -83,7 +83,7 @@ public class JiebaSegmenter {
                 if (null == candidate) {
                     candidate = new Pair<Integer>(x, freq);
                 }
-                else if (candidate.freq < freq) {
+                else if (candidate.freq <= freq) {
                     candidate.freq = freq;
                     candidate.key = x;
                 }
