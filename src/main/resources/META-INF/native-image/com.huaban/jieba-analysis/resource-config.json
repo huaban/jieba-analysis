@@ -1,0 +1,13 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": ".*\\.txt$"
+      },
+      {
+        "pattern": ".*\\.xml$"
+      }
+    ]
+  },
+  "bundles": []
+}

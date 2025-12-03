@@ -16,11 +16,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 public class WordDictionary {
     private static WordDictionary singleton;
     private static final String MAIN_DICT = "/dict.txt";
     private static String USER_DICT_SUFFIX = ".dict";
+
+    // Use a fixed locale for Native Image compatibility
+    private static final Locale LOCALE = Locale.ROOT;
 
     public final Map<String, Double> freqs = new HashMap<String, Double>();
     public final Set<String> loadedPath = new HashSet<String>();
@@ -28,11 +30,9 @@ public class WordDictionary {
     private Double total = 0.0;
     private DictSegment _dict;
 
-
     private WordDictionary() {
         this.loadDict();
     }
-
 
     public static WordDictionary getInstance() {
         if (singleton == null) {
@@ -46,7 +46,6 @@ public class WordDictionary {
         return singleton;
     }
 
-
     /**
      * for ES to initialize the user dictionary.
      * 
@@ -58,56 +57,57 @@ public class WordDictionary {
         synchronized (WordDictionary.class) {
             if (loadedPath.contains(abspath))
                 return;
-            
+
             DirectoryStream<Path> stream;
             try {
-                stream = Files.newDirectoryStream(configFile, String.format(Locale.getDefault(), "*%s", USER_DICT_SUFFIX));
-                for (Path path: stream){
-                    Log.error(String.format(Locale.getDefault(), "loading dict %s", path.toString()));
+                stream = Files.newDirectoryStream(configFile,
+                        String.format(LOCALE, "*%s", USER_DICT_SUFFIX));
+                for (Path path : stream) {
+                    Log.error(String.format(LOCALE, "loading dict %s", path.toString()));
                     singleton.loadUserDict(path);
                 }
                 loadedPath.add(abspath);
             } catch (IOException e) {
-                Log.error(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
+                Log.error(String.format(LOCALE, "%s: load user dict failure!", configFile.toString()));
             }
         }
     }
-    
+
     public void init(String[] paths) {
         synchronized (WordDictionary.class) {
-            for (String path: paths){
+            for (String path : paths) {
                 if (!loadedPath.contains(path)) {
                     try {
                         Log.debug("initialize user dictionary: " + path);
                         singleton.loadUserDict(path);
                         loadedPath.add(path);
                     } catch (Exception e) {
-                        Log.error(String.format(Locale.getDefault(), "%s: load user dict failure!", path));
+                        Log.error(String.format(LOCALE, "%s: load user dict failure!", path));
                     }
                 }
             }
         }
     }
-    
+
     /**
      * let user just use their own dict instead of the default dict
      */
-    public void resetDict(){
-    	_dict = new DictSegment((char) 0);
-    	freqs.clear();
+    public void resetDict() {
+        _dict = new DictSegment((char) 0);
+        freqs.clear();
     }
-
 
     public void loadDict() {
         _dict = new DictSegment((char) 0);
-        InputStream is = this.getClass().getResourceAsStream(MAIN_DICT);
+        InputStream is = null;
         try {
+            is = ResourceLoader.loadResourceAsStream(MAIN_DICT);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 
             long s = System.currentTimeMillis();
             while (br.ready()) {
                 String line = br.readLine();
-                String[] tokens = line.split("[\t ]+");
+                String[] tokens = line.split("[\\t ]+");
 
                 if (tokens.length < 2)
                     continue;
@@ -123,34 +123,32 @@ public class WordDictionary {
                 entry.setValue((Math.log(entry.getValue() / total)));
                 minFreq = Math.min(entry.getValue(), minFreq);
             }
-            Log.debug(String.format(Locale.getDefault(), "main dict load finished, time elapsed %d ms",
+            Log.debug(String.format(LOCALE, "main dict load finished, time elapsed %d ms",
                     System.currentTimeMillis() - s));
-        }
-        catch (IOException e) {
-            Log.error(String.format(Locale.getDefault(), "%s load failure!", MAIN_DICT));
-        }
-        finally {
+            br.close();
+        } catch (ResourceLoader.ResourceNotFoundException e) {
+            Log.error(String.format(LOCALE, "%s: resource not found! %s", MAIN_DICT, e.getMessage()));
+            throw e;
+        } catch (IOException e) {
+            Log.error(String.format(LOCALE, "%s load failure!", MAIN_DICT));
+        } finally {
             try {
                 if (null != is)
                     is.close();
-            }
-            catch (IOException e) {
-                Log.error(String.format(Locale.getDefault(), "%s close failure!", MAIN_DICT));
+            } catch (IOException e) {
+                Log.error(String.format(LOCALE, "%s close failure!", MAIN_DICT));
             }
         }
     }
-
 
     private String addWord(String word) {
         if (null != word && !"".equals(word.trim())) {
-            String key = word.trim().toLowerCase(Locale.getDefault());
+            String key = word.trim().toLowerCase(LOCALE);
             _dict.fillSegment(key.toCharArray());
             return key;
-        }
-        else
+        } else
             return null;
     }
-
 
     public void loadUserDict(Path userDict) {
         loadUserDict(userDict, StandardCharsets.UTF_8);
@@ -159,8 +157,8 @@ public class WordDictionary {
     public void loadUserDict(String userDictPath) {
         loadUserDict(userDictPath, StandardCharsets.UTF_8);
     }
-    
-    public void loadUserDict(Path userDict, Charset charset) {                
+
+    public void loadUserDict(Path userDict, Charset charset) {
         try {
             BufferedReader br = Files.newBufferedReader(userDict, charset);
             long s = System.currentTimeMillis();
@@ -179,28 +177,29 @@ public class WordDictionary {
                 double freq = 3.0d;
                 if (tokens.length == 2)
                     freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
+                word = addWord(word);
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
-            Log.debug(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
+            Log.debug(String.format(LOCALE, "user dict %s load finished, tot words:%d, time elapsed:%dms",
+                    userDict.toString(), count, System.currentTimeMillis() - s));
             br.close();
-        }
-        catch (IOException e) {
-            Log.error(String.format(Locale.getDefault(), "%s: load user dict failure!", userDict.toString()));
+        } catch (IOException e) {
+            Log.error(String.format(LOCALE, "%s: load user dict failure!", userDict.toString()));
         }
     }
 
     public void loadUserDict(String userDictPath, Charset charset) {
-        InputStream is = this.getClass().getResourceAsStream(userDictPath);
+        InputStream is = null;
         try {
+            is = ResourceLoader.loadResourceAsStream(userDictPath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, charset));
 
             long s = System.currentTimeMillis();
             int count = 0;
             while (br.ready()) {
                 String line = br.readLine();
-                String[] tokens = line.split("[\t ]+");
+                String[] tokens = line.split("[\\t ]+");
 
                 if (tokens.length < 1) {
                     // Ignore empty line
@@ -216,23 +215,30 @@ public class WordDictionary {
                 freqs.put(word, Math.log(freq / total));
                 count++;
             }
-            Log.debug(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDictPath, count, System.currentTimeMillis() - s));
+            Log.debug(String.format(LOCALE, "user dict %s load finished, tot words:%d, time elapsed:%dms",
+                    userDictPath, count, System.currentTimeMillis() - s));
             br.close();
-        }
-        catch (IOException e) {
-            Log.error(String.format(Locale.getDefault(), "%s: load user dict failure!", userDictPath));
+        } catch (ResourceLoader.ResourceNotFoundException e) {
+            Log.error(String.format(LOCALE, "%s: resource not found! %s", userDictPath, e.getMessage()));
+        } catch (IOException e) {
+            Log.error(String.format(LOCALE, "%s: load user dict failure!", userDictPath));
+        } finally {
+            try {
+                if (null != is)
+                    is.close();
+            } catch (IOException e) {
+                Log.error(String.format(LOCALE, "%s: close failure!", userDictPath));
+            }
         }
     }
-    
+
     public DictSegment getTrie() {
         return this._dict;
     }
 
-
     public boolean containsWord(String word) {
         return freqs.containsKey(word);
     }
-
 
     public Double getFreq(String key) {
         if (containsWord(key))

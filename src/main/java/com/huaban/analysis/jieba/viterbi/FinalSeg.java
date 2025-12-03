@@ -17,22 +17,24 @@ import com.huaban.analysis.jieba.CharacterUtil;
 import com.huaban.analysis.jieba.Log;
 import com.huaban.analysis.jieba.Pair;
 import com.huaban.analysis.jieba.Node;
-
+import com.huaban.analysis.jieba.ResourceLoader;
 
 public class FinalSeg {
     private static FinalSeg singleInstance;
     private static final String PROB_EMIT = "/prob_emit.txt";
     private static char[] states = new char[] { 'B', 'M', 'E', 'S' };
+
+    // Use a fixed locale for Native Image compatibility
+    private static final Locale LOCALE = Locale.ROOT;
+
     private static Map<Character, Map<Character, Double>> emit;
     private static Map<Character, Double> start;
     private static Map<Character, Map<Character, Double>> trans;
     private static Map<Character, char[]> prevStatus;
     private static Double MIN_FLOAT = -3.14e100;;
 
-
     private FinalSeg() {
     }
-
 
     public synchronized static FinalSeg getInstance() {
         if (null == singleInstance) {
@@ -41,7 +43,6 @@ public class FinalSeg {
         }
         return singleInstance;
     }
-
 
     private void loadModel() {
         long s = System.currentTimeMillis();
@@ -75,39 +76,39 @@ public class FinalSeg {
         transS.put('S', -0.6658631448798212);
         trans.put('S', transS);
 
-        InputStream is = this.getClass().getResourceAsStream(PROB_EMIT);
+        InputStream is = null;
         try {
+            is = ResourceLoader.loadResourceAsStream(PROB_EMIT);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             emit = new HashMap<Character, Map<Character, Double>>();
             Map<Character, Double> values = null;
             while (br.ready()) {
                 String line = br.readLine();
-                String[] tokens = line.split("\t");
+                String[] tokens = line.split("\\t");
                 if (tokens.length == 1) {
                     values = new HashMap<Character, Double>();
                     emit.put(tokens[0].charAt(0), values);
-                }
-                else {
+                } else {
                     values.put(tokens[0].charAt(0), Double.valueOf(tokens[1]));
                 }
             }
-        }
-        catch (IOException e) {
-            Log.error(String.format(Locale.getDefault(), "%s: load model failure!", PROB_EMIT));
-        }
-        finally {
+            br.close();
+        } catch (ResourceLoader.ResourceNotFoundException e) {
+            Log.error(String.format(LOCALE, "%s: resource not found! %s", PROB_EMIT, e.getMessage()));
+            throw e;
+        } catch (IOException e) {
+            Log.error(String.format(LOCALE, "%s: load model failure!", PROB_EMIT));
+        } finally {
             try {
                 if (null != is)
                     is.close();
-            }
-            catch (IOException e) {
-                Log.error(String.format(Locale.getDefault(), "%s: close failure!", PROB_EMIT));
+            } catch (IOException e) {
+                Log.error(String.format(LOCALE, "%s: close failure!", PROB_EMIT));
             }
         }
-        Log.debug(String.format(Locale.getDefault(), "model load finished, time elapsed %d ms.",
-            System.currentTimeMillis() - s));
+        Log.debug(String.format(LOCALE, "model load finished, time elapsed %d ms.",
+                System.currentTimeMillis() - s));
     }
-
 
     public void cut(String sentence, List<String> tokens) {
         StringBuilder chinese = new StringBuilder();
@@ -120,8 +121,7 @@ public class FinalSeg {
                     other = new StringBuilder();
                 }
                 chinese.append(ch);
-            }
-            else {
+            } else {
                 if (chinese.length() > 0) {
                     viterbi(chinese.toString(), tokens);
                     chinese = new StringBuilder();
@@ -136,7 +136,6 @@ public class FinalSeg {
             processOtherUnknownWords(other.toString(), tokens);
         }
     }
-
 
     public void viterbi(String sentence, List<String> tokens) {
         Vector<Map<Character, Double>> v = new Vector<Map<Character, Double>>();
@@ -200,8 +199,7 @@ public class FinalSeg {
             else if (pos == 'E') {
                 tokens.add(sentence.substring(begin, i + 1));
                 next = i + 1;
-            }
-            else if (pos == 'S') {
+            } else if (pos == 'S') {
                 tokens.add(sentence.substring(i, i + 1));
                 next = i + 1;
             }
@@ -209,7 +207,6 @@ public class FinalSeg {
         if (next < sentence.length())
             tokens.add(sentence.substring(next));
     }
-
 
     private void processOtherUnknownWords(String other, List<String> tokens) {
         Matcher mat = CharacterUtil.reSkip.matcher(other);
