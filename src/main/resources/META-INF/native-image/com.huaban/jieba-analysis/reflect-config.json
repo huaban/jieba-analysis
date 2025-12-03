@@ -1,0 +1,26 @@
+[
+  {
+    "name": "com.huaban.analysis.jieba.WordDictionary",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.huaban.analysis.jieba.viterbi.FinalSeg",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.huaban.analysis.jieba.JiebaSegmenter",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.huaban.analysis.jieba.DictSegment",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  }
+]

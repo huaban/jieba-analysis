@@ -44,28 +44,28 @@
     }
 ```
 
-<!-- 如何获取
+如何获取
 ========
 
--   当前稳定版本
+-   Maven 依赖
 
-    ``` {.xml}
+    ```xml
     <dependency>
       <groupId>com.huaban</groupId>
       <artifactId>jieba-analysis</artifactId>
-      <version>1.0.2</version>
+      <version>2.0.1</version>
     </dependency>
     ```
 
--   当前快照版本
+-   GraalVM Native Image 支持
 
-    ``` {.xml}
-    <dependency>
-      <groupId>com.huaban</groupId>
-      <artifactId>jieba-analysis</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
-    </dependency>
-    ``` -->
+    本项目已支持 GraalVM Native Image，可以直接编译为本地可执行文件。
+    详细使用指南请参考 [NATIVE_IMAGE_GUIDE.md](NATIVE_IMAGE_GUIDE.md)。
+
+    ```bash
+    # 构建 Native Image
+    ./build-native.sh
+    ```
 
 如何使用
 ========
